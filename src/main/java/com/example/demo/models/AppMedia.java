@@ -46,6 +46,5 @@ public class AppMedia {
 
 		public Media() {
 		}
-
 	}
 }

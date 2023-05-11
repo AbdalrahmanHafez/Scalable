@@ -112,6 +112,52 @@ public class DemoApplication {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	@GetMapping("/getAppAPK/{app_id}")
+	public ResponseEntity<ByteArrayResource> postAppApk(@PathVariable String app_id) throws IOException {
+
+		if (!itemRepo.findById(app_id).isPresent()) {
+			return new ResponseEntity("App does not exists", HttpStatus.BAD_REQUEST);
+		}
+
+		AppMedia m = itemRepo.findById(app_id).get();
+		GridFSFile gridFSFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(m.apk_id)));
+
+		String file_name = "";
+		String file_type = "";
+		String file_size = "";
+		byte[] data = null;
+
+		if (gridFSFile != null && gridFSFile.getMetadata() != null) {
+			file_name = gridFSFile.getFilename();
+
+			file_type = gridFSFile.getMetadata().get("_contentType").toString();
+
+			file_size = gridFSFile.getMetadata().get("fileSize").toString();
+
+			data = new byte[Integer.parseInt(file_size)];
+
+			IOUtils.readFully(operations.getResource(gridFSFile).getInputStream(), data);
+		}
+
+		return ResponseEntity.ok()
+				.contentType(MediaType.parseMediaType(file_type))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file_name + "\"")
+				.body(new ByteArrayResource(data));
+
+	}
+
+	@GetMapping("/getAppMedia/{app_id}")
+	public ResponseEntity<String> GetAppMedia(@PathVariable String app_id) throws IOException {
+
+		if (!itemRepo.findById(app_id).isPresent()) {
+			return new ResponseEntity<>("App does not exists", HttpStatus.BAD_REQUEST);
+		}
+
+		AppMedia appMedia = itemRepo.findById(app_id).get();
+
+		return new ResponseEntity(appMedia.media, HttpStatus.OK);
+	}
+
 	public String gfsUploadFile(MultipartFile upload) throws IOException {
 
 		DBObject metadata = new BasicDBObject();
@@ -175,12 +221,6 @@ public class DemoApplication {
 				.contentType(MediaType.parseMediaType(file_type))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file_name + "\"")
 				.body(new ByteArrayResource(data));
-	}
-
-	class AppUploadBody {
-		public String app_name;
-		public byte[] apk_data;
-
 	}
 
 }
