@@ -23,7 +23,6 @@ public class AppMedia {
 	@Id
 	public String id;
 
-	public int app_id;
 	public String apk_id;
 	public ArrayList<Media> media;
 
@@ -34,16 +33,16 @@ public class AppMedia {
 		media = new ArrayList<Media>();
 	}
 
-	public void insertMedia(String type, String data) {
+	public void insertMedia(String type, String link) {
 		Media m = new Media();
 		m.type = type;
-		m.data = data;
+		m.link = link;
 		media.add(m);
 	}
 
 	public static class Media {
 		public String type;
-		public String data;
+		public String link;
 
 		public Media() {
 		}

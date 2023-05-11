@@ -72,7 +72,47 @@ public class DemoApplication {
 
 	}
 
-	public String addFile(MultipartFile upload) throws IOException {
+	@PostMapping("/uploadAppAPK")
+	public ResponseEntity<String> postAppApk(
+			@RequestParam("app_id") String app_id,
+			@RequestParam("data") MultipartFile apkData) throws IOException {
+
+		if (itemRepo.findById(app_id).isPresent()) {
+			return new ResponseEntity<>("App already exists", HttpStatus.BAD_REQUEST);
+		}
+
+		AppMedia m = new AppMedia();
+		m.id = app_id;
+		m.apk_id = gfsUploadFile(apkData);
+
+		itemRepo.save(m);
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PostMapping("/uploadAppMedia")
+	public ResponseEntity<String> postAppMedia(
+			@RequestParam("app_id") String app_id,
+			@RequestParam("media_type") String media_type,
+			@RequestParam("link") String link) throws IOException {
+
+		if (!itemRepo.findById(app_id).isPresent()) {
+			return new ResponseEntity<>("App does not exists", HttpStatus.BAD_REQUEST);
+		}
+
+		AppMedia appMedia = itemRepo.findById(app_id).get();
+
+		if (!media_type.equals("image") && !media_type.equals("video"))
+			return new ResponseEntity<>("App media_type must be either 'image' or 'video'", HttpStatus.BAD_REQUEST);
+
+		appMedia.insertMedia(media_type, link);
+
+		itemRepo.save(appMedia);
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	public String gfsUploadFile(MultipartFile upload) throws IOException {
 
 		DBObject metadata = new BasicDBObject();
 		metadata.put("fileSize", upload.getSize());
@@ -81,11 +121,6 @@ public class DemoApplication {
 				upload.getContentType(), metadata);
 
 		return fileID.toString();
-	}
-
-	@PostMapping("/upload")
-	public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file) throws IOException {
-		return new ResponseEntity<>(addFile(file), HttpStatus.OK);
 	}
 
 	@GetMapping("/test")
@@ -142,16 +177,10 @@ public class DemoApplication {
 				.body(new ByteArrayResource(data));
 	}
 
-	// @Autowired
-	// Sender sender;
+	class AppUploadBody {
+		public String app_name;
+		public byte[] apk_data;
 
-	// @PostMapping("/send")
-	// public String sendMessage(@RequestBody String message) {
-	// // Send a post request with a text body to http://localhost:8080/send
-
-	// sender.sendMessage(message);
-
-	// return "Message sent";
-	// }
+	}
 
 }
