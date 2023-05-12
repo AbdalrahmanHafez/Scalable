@@ -1,7 +1,7 @@
 package com.example.productApp.models;
 
 
-import jdk.jfr.Category;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -102,15 +102,5 @@ public class Product {
     public void setCategory_id(String category_id) {
         this.category_id = category_id;
     }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + productId +
-                ", name='" + productName + '\'' +
-                ", description='" + description + '\'' +
-                ", download_count=" + download_count +
-                ", version='" + version + '\'' +
-                '}';
-    }
+    
 }

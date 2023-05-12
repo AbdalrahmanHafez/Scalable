@@ -48,8 +48,6 @@ public class ProductService {
 
 
     public List<Product> getProductsByCategoryId(String category_id) {
-
-
         Query query = new Query();
         query.addCriteria(Criteria.where("category_id").is(category_id));
 
