@@ -18,19 +18,19 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
 
-//    public List<Comment> getCommentsByUser(String userId) {
-//        return commentRepository.findByUserId(userId);
-//    }
-//
-//    public List<Comment> getCommentsByApp(String appId) {
-//        return commentRepository.findByAppId(appId);
-//    }
+    public List<Comment> getCommentsByUser(String userId) {
+        return commentRepository.findByUserId(userId);
+    }
 
-//    public Comment createComment(Comment comment) {
-//        comment.setCommentId(UUID.randomUUID().toString());
-//        comment.setTimestamp(LocalDateTime.now());
-//        return commentRepository.save(comment);
-//    }
+    public List<Comment> getCommentsByApp(String appId) {
+        return commentRepository.findByAppId(appId);
+    }
+
+    public Comment createComment(Comment comment) {
+        comment.setId(UUID.randomUUID().toString());
+        return commentRepository.save(comment);
+    }
+
 
     public void deleteComment(String commentId) {
         commentRepository.deleteById(commentId);
