@@ -17,20 +17,20 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-//    @GetMapping("/user/{userId}")
-//    public List<Comment> getCommentsByUser(@PathVariable String userId) {
-//        return commentService.getCommentsByUser(userId);
-//    }
-//
-//    @GetMapping("/app/{appId}")
-//    public List<Comment> getCommentsByApp(@PathVariable String appId) {
-//        return commentService.getCommentsByApp(appId);
-//    }
-//
-//    @PostMapping
-//    public Comment createComment(@RequestBody Comment comment) {
-//        return commentService.createComment(comment);
-//    }
+    @GetMapping("/user/{userId}")
+    public List<Comment> getCommentsByUser(@PathVariable String userId) {
+        return commentService.getCommentsByUser(userId);
+    }
+
+    @GetMapping("/app/{appId}")
+    public List<Comment> getCommentsByApp(@PathVariable String appId) {
+        return commentService.getCommentsByApp(appId);
+    }
+
+    @PostMapping
+    public Comment createComment(@RequestBody Comment comment) {
+        return commentService.createComment(comment);
+    }
 
     @DeleteMapping("/{commentId}")
     public void deleteComment(@PathVariable String commentId) {

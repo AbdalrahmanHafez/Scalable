@@ -1,11 +1,12 @@
 package com.example.productApp.models;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 
 @Document(collection = "comments")
@@ -15,20 +16,21 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    private String id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", referencedColumnName = "id")
-//    private User user;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "app_id", referencedColumnName = "id")
-//    private App app;
+    @Field(name = "user_id")
+    private String userId;
 
-    @Column(name = "comment_text")
+    @Field(name = "app_id")
+    private String appId;
+
+    @Field(name = "comment_text")
     private String comment;
 
+    public Comment(String userId, String appId, String comment) {
+        this.userId = userId;
+        this.appId = appId;
+        this.comment = comment;
+    }
 }
 
