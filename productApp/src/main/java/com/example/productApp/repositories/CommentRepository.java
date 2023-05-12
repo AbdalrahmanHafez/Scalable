@@ -1,6 +1,6 @@
-package main.java.com.example.productApp.repositories;
+package com.example.productApp.repositories;
 
-import main.java.com.example.productApp.models.Comment;
+import com.example.productApp.models.Comment;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

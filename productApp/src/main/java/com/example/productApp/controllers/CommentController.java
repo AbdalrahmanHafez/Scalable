@@ -1,7 +1,7 @@
-package main.java.com.example.productApp.controllers;
+package com.example.productApp.controllers;
 
-import main.java.com.example.productApp.models.Comment;
-import main.java.com.example.productApp.services.CommentService;
+import com.example.productApp.models.Comment;
+import com.example.productApp.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

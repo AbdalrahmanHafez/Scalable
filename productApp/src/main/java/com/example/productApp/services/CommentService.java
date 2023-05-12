@@ -1,7 +1,7 @@
-package main.java.com.example.productApp.services;
+package com.example.productApp.services;
 
-import main.java.com.example.productApp.models.Comment;
-import main.java.com.example.productApp.repositories.CommentRepository;
+import com.example.productApp.models.Comment;
+import com.example.productApp.repositories.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
