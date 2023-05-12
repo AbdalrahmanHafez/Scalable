@@ -14,7 +14,8 @@ import java.util.Optional;
 
 @Service
 public class ProductService {
-
+    @Autowired
+    private MongoTemplate mongoTemplate;
     private final ProductRepository productRepository;
 
     @Autowired
@@ -45,17 +46,14 @@ public class ProductService {
         return productOptional.orElse(null);
     }
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+
     public List<Product> getProductsByCategoryId(String category_id) {
 
 
         Query query = new Query();
         query.addCriteria(Criteria.where("category_id").is(category_id));
 
-        List<Product> result = mongoTemplate.find(query, Product.class);
-
-        return result;
+        return mongoTemplate.find(query, Product.class);
     }
 
     public void addNewProduct(Product product) {
