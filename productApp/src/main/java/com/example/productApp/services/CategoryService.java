@@ -16,7 +16,7 @@ public class CategoryService {
         return categoryRepo.findAll();
     }
 
-    public String getCategory(int id){
+    public Category getCategory(int id){
         return categoryRepo.findById(id);
     }
 }

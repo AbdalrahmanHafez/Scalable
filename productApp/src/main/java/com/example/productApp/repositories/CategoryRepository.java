@@ -6,5 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface CategoryRepository extends MongoRepository<Category, String> {
-    String findById(int id);
+    Category findById(int id);
 }
