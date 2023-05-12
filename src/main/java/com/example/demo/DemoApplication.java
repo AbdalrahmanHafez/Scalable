@@ -2,6 +2,7 @@ package com.example.demo;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javax.swing.plaf.synth.SynthToolBarUI;
 
@@ -48,18 +49,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 // @EnableScheduling
-// @SpringBootApplication
 // @EnableRabbit
-@RestController
 @SpringBootApplication
+@RestController
 @EnableMongoRepositories
 public class DemoApplication {
 
 	@Autowired
 	ItemRepository itemRepo;
-
-	// @Autowired
-	// private MappingMongoConverter mongoConverter;
 
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
@@ -69,7 +66,6 @@ public class DemoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
-
 	}
 
 	@PostMapping("/uploadAppAPK")
@@ -77,12 +73,11 @@ public class DemoApplication {
 			@RequestParam("app_id") String app_id,
 			@RequestParam("data") MultipartFile apkData) throws IOException {
 
-		if (itemRepo.findById(app_id).isPresent()) {
+		if (itemRepo.findById(app_id).isPresent())
 			return new ResponseEntity<>("App already exists", HttpStatus.BAD_REQUEST);
-		}
 
 		AppMedia m = new AppMedia();
-		m.id = app_id;
+		m.app_id = app_id;
 		m.apk_id = gfsUploadFile(apkData);
 
 		itemRepo.save(m);
@@ -96,11 +91,11 @@ public class DemoApplication {
 			@RequestParam("media_type") String media_type,
 			@RequestParam("link") String link) throws IOException {
 
-		if (!itemRepo.findById(app_id).isPresent()) {
+		Optional<AppMedia> appMediaOp = itemRepo.findById(app_id);
+		if (!appMediaOp.isPresent())
 			return new ResponseEntity<>("App does not exists", HttpStatus.BAD_REQUEST);
-		}
 
-		AppMedia appMedia = itemRepo.findById(app_id).get();
+		AppMedia appMedia = appMediaOp.get();
 
 		if (!media_type.equals("image") && !media_type.equals("video"))
 			return new ResponseEntity<>("App media_type must be either 'image' or 'video'", HttpStatus.BAD_REQUEST);
@@ -115,11 +110,12 @@ public class DemoApplication {
 	@GetMapping("/getAppAPK/{app_id}")
 	public ResponseEntity<ByteArrayResource> postAppApk(@PathVariable String app_id) throws IOException {
 
-		if (!itemRepo.findById(app_id).isPresent()) {
-			return new ResponseEntity("App does not exists", HttpStatus.BAD_REQUEST);
-		}
+		Optional<AppMedia> appMediaOp = itemRepo.findById(app_id);
 
-		AppMedia m = itemRepo.findById(app_id).get();
+		if (!appMediaOp.isPresent())
+			return new ResponseEntity("App does not exists", HttpStatus.BAD_REQUEST);
+
+		AppMedia m = appMediaOp.get();
 		GridFSFile gridFSFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(m.apk_id)));
 
 		String file_name = "";
@@ -149,11 +145,13 @@ public class DemoApplication {
 	@GetMapping("/getAppMedia/{app_id}")
 	public ResponseEntity<String> GetAppMedia(@PathVariable String app_id) throws IOException {
 
-		if (!itemRepo.findById(app_id).isPresent()) {
+		Optional<AppMedia> appMediaOp = itemRepo.findById(app_id);
+
+		if (!appMediaOp.isPresent()) {
 			return new ResponseEntity<>("App does not exists", HttpStatus.BAD_REQUEST);
 		}
 
-		AppMedia appMedia = itemRepo.findById(app_id).get();
+		AppMedia appMedia = appMediaOp.get();
 
 		return new ResponseEntity(appMedia.media, HttpStatus.OK);
 	}

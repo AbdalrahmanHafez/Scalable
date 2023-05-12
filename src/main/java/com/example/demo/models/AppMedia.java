@@ -1,7 +1,6 @@
 package com.example.demo.models;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -21,15 +20,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document("AppMedia")
 public class AppMedia {
 	@Id
-	public String id;
+	public String app_id;
 
 	public String apk_id;
 	public ArrayList<Media> media;
 
 	public AppMedia() {
 		super();
-		// this.id = id;
-		// media = new Media[1];
 		media = new ArrayList<Media>();
 	}
 
@@ -41,7 +38,7 @@ public class AppMedia {
 	}
 
 	public static class Media {
-		public String type;
+		public String type; // image | video
 		public String link;
 
 		public Media() {
