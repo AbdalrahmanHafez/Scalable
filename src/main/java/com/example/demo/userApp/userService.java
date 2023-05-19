@@ -1,10 +1,10 @@
-package com.example.demo.UserApp;
+package com.example.demo.userApp;
 
-import com.example.demo.repository.UserRepository;
+
+import com.example.demo.repository.userRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,23 +13,23 @@ import java.util.Objects;
 
 @Service
 @Configuration
-@EnableJpaRepositories("com.example.demo.repository.UserRepository")
-@ComponentScan("com.example.demo.repository")
-public class UserServices {
 
-    private final UserRepository userRepository;
+@ComponentScan("com.example.demo.repository")
+public class userService {
+
+    private final userRepository userRepository;
 
     @Autowired
-    public UserServices(UserRepository userRepository) {
+    public userService(userRepository userRepository) {
         this.userRepository = userRepository;
     }
 
 
-    public List<User> getUsers(){
-        return List.of(new User("youssef", "ymgendy@hotmail.com", "p4pass"));
+    public List<user> getUsers(){
+        return userRepository.findAll();
     }
 
-    public void addNewUser(User user){
+    public void addNewUser(user user){
         userRepository.save(user);
     }
 
@@ -44,19 +44,23 @@ public class UserServices {
     }
 
     public void updateUser(Long userID, String name, String email, String password){
-        User user = userRepository.findById(userID).orElseThrow(()-> new IllegalStateException("User with id " + userID + "does not exist"));
+        user user = userRepository.findById(userID).orElseThrow(()-> new IllegalStateException("User with id " + userID + "does not exist"));
         if(name != null && name.length() > 0 && !Objects.equals(user.getName(), name)){
             user.setName(name);
+            userRepository.save(user);
         }
 
         if(email != null && email.length() > 0 && !Objects.equals(user.getEmail(), email)){
             user.setEmail(email);
+            userRepository.save(user);
         }
 
         if(password != null && password.length() > 0 && !Objects.equals(user.getPassword(), password)){
             user.setPassword(password);
+            userRepository.save(user);
         }
     }
 
 
 }
+
