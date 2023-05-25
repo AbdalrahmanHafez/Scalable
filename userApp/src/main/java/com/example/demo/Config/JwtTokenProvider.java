@@ -17,25 +17,26 @@ public class JwtTokenProvider {
         this.jwtConfig = jwtConfig;
     }
 
-    public String generateToken(String email) {
+    public String generateToken(long id) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtConfig.getExpirationMs());
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(id + "")
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtConfig.getSecret())
                 .compact();
     }
 
-    public String getEmailFromToken(String token) {
+
+    public long getIDFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtConfig.getSecret())
                 .parseClaimsJws(token)
                 .getBody();
 
-        return claims.getSubject();
+        return Long.parseLong(claims.getSubject());
     }
 
     public boolean validateToken(String token) {

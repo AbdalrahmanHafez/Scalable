@@ -1,6 +1,6 @@
 package com.example.demo.repository;
 
-import com.example.demo.userApp.user;
+import com.example.demo.userApp.User;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,8 +10,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @ComponentScan
-public interface userRepository extends JpaRepository<user, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    user findUserByEmail(String email);
+    User findUserByEmail(String email);
+
 
 }

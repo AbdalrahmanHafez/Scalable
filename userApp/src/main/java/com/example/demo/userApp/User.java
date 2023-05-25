@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "playstore_user")
-public class user {
+public class User {
     @Id
     @SequenceGenerator(name = "usersequence", sequenceName = "usersequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usersequence")
@@ -19,11 +19,10 @@ public class user {
     @Column(name = "user_password")
     private  String password;
 
-    public user(){
+    public User(){
 
     }
-    public user(String name, String email, String password) {
-
+    public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -53,5 +52,9 @@ public class user {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public long getId() {
+        return id;
     }
 }
