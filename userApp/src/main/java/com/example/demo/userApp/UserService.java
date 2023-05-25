@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,6 +23,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private LoggingService loggingService;
+
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
@@ -40,9 +45,12 @@ public class UserService {
             String hashedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(hashedPassword);
             userRepository.save(user);
+            loggingService.logInfo("User Created successfully",user.getId());
             return ResponseEntity.ok("User Created successfully");
         }
         else{
+
+            loggingService.logError("A user with this email already exists, email: " + user.getEmail());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("A user with this email already exists, email: " + user.getEmail());
         }
     }
@@ -51,9 +59,11 @@ public class UserService {
         boolean userExists = userRepository.existsById(userID);
         if(userExists){
             userRepository.deleteById(userID);
+            loggingService.logInfo("User Deleted successfully", userID);
             return ResponseEntity.ok("User Deleted successfully");
         }
         else{
+            loggingService.logError("User not found, user ID: " + userID);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found, user ID: " + userID);
         }
     }
@@ -63,6 +73,7 @@ public class UserService {
         Boolean userExists = optionalUser.isPresent();
 
         if(!userExists){
+            loggingService.logError("User not found, user ID: " + userID);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found, user ID: " + userID);
         }
 
@@ -70,21 +81,30 @@ public class UserService {
             User user = optionalUser.get();
 
             if(name != null && name.length() > 0 && !Objects.equals(user.getName(), name)){
+                loggingService.logInfo("Name has been changed.",user.getId());
                 user.setName(name);
             }
 
             if(email != null && email.length() > 0 && !Objects.equals(user.getEmail(), email)){
                 User duplicateUser = userRepository.findUserByEmail(email);
-                if(duplicateUser == null)
+                if(duplicateUser == null){
                     user.setEmail(email);
-                else return ResponseEntity.status(HttpStatus.CONFLICT).body("A user with this email already exists, email: " + email);
+                    loggingService.logInfo("Email has been changed.", user.getId());
+                }
+
+                else {
+                    loggingService.logError("A user with this email already exists, email: " + email);
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("A user with this email already exists, email: " + email);
+                }
             }
 
             if(password != null && password.length() > 0 && !Objects.equals(user.getPassword(), password)){
+                loggingService.logInfo("Password has been changed.", user.getId());
                 user.setPassword(password);
             }
 
             userRepository.save(user);
+            loggingService.logInfo("User Updated successfully", user.getId());
             return ResponseEntity.ok("User Updated successfully");
         }
     }
@@ -95,6 +115,7 @@ public class UserService {
             boolean verified = passwordEncoder.matches(password, logged.getPassword());
             if (verified) {
                 // Generate JWT token
+                loggingService.logInfo("generated Token for ", logged.getId());
                 return jwtTokenProvider.generateToken(logged.getId());
             }
         }
