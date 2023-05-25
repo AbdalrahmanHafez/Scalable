@@ -74,8 +74,8 @@ public class UserController {
         try {
             Long userID = jwtTokenProvider.getIDFromToken(token);
             if(userID == null){
-                loggingService.logError("Invalid user");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user");
+                loggingService.logError("Invalid user Token");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user Token");
 
             }
              loggingService.logInfo("user update successfully", userID);
@@ -83,8 +83,8 @@ public class UserController {
 
         }
         catch(Exception e){
-            loggingService.logError("Invalid user", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user");
+            loggingService.logError(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
