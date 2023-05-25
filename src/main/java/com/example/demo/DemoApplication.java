@@ -51,7 +51,7 @@ import org.springframework.http.ResponseEntity;
 
 // @EnableScheduling
 // @EnableRabbit
-@SpringBootApplication()
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
 @RestController
 @EnableMongoRepositories
 public class DemoApplication {
