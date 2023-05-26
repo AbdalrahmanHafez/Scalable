@@ -5,6 +5,10 @@ import com.example.demo.Models.RequestThread;
 import com.example.demo.Repository.UserRepository;
 import com.example.demo.Models.User;
 import com.example.demo.Services.UserService;
+import com.example.demo.Services.LoggingService;
+
+
+
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +36,8 @@ public class UserController {
 
     private final UserService userServices;
     private final UserRepository userRepository;
+    @Autowired
+    private LoggingService loggingService;
 
     @Autowired
     public UserController(UserService userServices, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
@@ -44,6 +50,7 @@ public class UserController {
     @Async
     public CompletableFuture<List<User>> getUsers(){
         CompletableFuture<List<User>> users = userServices.getUsersAsync();
+        loggingService.logInfo("Returning all users in DB");
         return users;
     }
 
@@ -78,14 +85,18 @@ public class UserController {
 
         try {
             Long userID = jwtTokenProvider.getIDFromToken(token);
-            if(userID == null)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user");
+            if(userID == null){
+                loggingService.logError("Invalid user Token");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user Token");
 
+            }
+             loggingService.logInfo("user update successfully", userID);
             return userServices.updateUser(userID, name, email, password);
 
         }
         catch(Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user");
+            loggingService.logError(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -97,14 +108,17 @@ public class UserController {
         try {
             token = tokenFuture.get();
         } catch (Exception e) {
+            loggingService.logError("Invalid login credentials.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid login credentials.");
         }
         if (token != null) {
-                        response.setHeader("user-token", token);
-                        return ResponseEntity.ok("User logged in successfully");
-                    } else {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid login credentials.");
-                    }
+            response.setHeader("user-token", token);
+            loggingService.logInfo("User logged in successfully");
+            return ResponseEntity.ok("User logged in successfully");
+        } else {
+            loggingService.logError("Invalid login credentials.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid login credentials.");
+        }
     }
 
     @PostMapping(path = "/admin/threadCount")
