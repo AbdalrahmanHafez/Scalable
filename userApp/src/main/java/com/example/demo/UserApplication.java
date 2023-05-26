@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@EnableRabbit
+//@EnableRabbit
 @RestController
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 

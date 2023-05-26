@@ -1,14 +1,12 @@
 package com.example.demo.Controller;
-
 import com.example.demo.Config.JwtTokenProvider;
 import com.example.demo.Models.RequestThread;
 import com.example.demo.Repository.UserRepository;
 import com.example.demo.Models.User;
 import com.example.demo.Services.UserService;
 import com.example.demo.Services.LoggingService;
-
-
-
+import com.example.demo.Kafka.KafkaJSONProducer;
+import com.example.demo.Kafka.KafkaProducer;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,17 +31,20 @@ public class UserController {
             return null;
     }
 
-
+    private KafkaProducer kafkaProducer;
+    private KafkaJSONProducer kafkaJSONProducer;
     private final UserService userServices;
     private final UserRepository userRepository;
     @Autowired
     private LoggingService loggingService;
 
     @Autowired
-    public UserController(UserService userServices, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
+    public UserController(UserService userServices, JwtTokenProvider jwtTokenProvider, UserRepository userRepository, KafkaProducer kafkaProducer, KafkaJSONProducer kafkaJSONProducer) {
         this.userServices = userServices;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
+        this.kafkaProducer = kafkaProducer;
+        this.kafkaJSONProducer = kafkaJSONProducer;
     }
 
     @GetMapping(path = "/admin/user")
@@ -127,5 +128,20 @@ public class UserController {
     }
 
 
-}
 
+    @GetMapping("/kafka/publish")
+    public ResponseEntity<String> publish(@RequestParam("message") String message)
+    {
+        kafkaProducer.sendMessage(message);
+        return ResponseEntity.ok("Message sent to UserCluster");
+    }
+
+    @PostMapping("/kafka/publishJson")
+    public ResponseEntity<String> publishJson(@RequestBody User user)
+    {
+        kafkaJSONProducer.sendMessage(user);
+        return ResponseEntity.ok("Message sent to UserCluster");
+    }
+
+
+}
