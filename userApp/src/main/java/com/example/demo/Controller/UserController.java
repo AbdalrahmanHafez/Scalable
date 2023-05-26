@@ -1,16 +1,19 @@
 package com.example.demo.Controller;
 
 import com.example.demo.Config.JwtTokenProvider;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.userApp.User;
-import com.example.demo.userApp.UserService;
+import com.example.demo.Models.RequestThread;
+import com.example.demo.Repository.UserRepository;
+import com.example.demo.Models.User;
+import com.example.demo.Services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 
 @RestController
 @RequestMapping(path ="api/v1")
@@ -38,21 +41,26 @@ public class UserController {
     }
 
     @GetMapping(path = "/admin/user")
-    public List<User> getUsers(){
-        return userServices.getUsers();
+    @Async
+    public CompletableFuture<List<User>> getUsers(){
+        CompletableFuture<List<User>> users = userServices.getUsersAsync();
+        return users;
     }
 
     @PostMapping(path = "/admin/user")
+    @Async
     public ResponseEntity<String> registerNewUser(@RequestBody User user){
         return userServices.addNewUser(user);
     }
 
     @DeleteMapping(path = "/admin/user/{user_id}")
+    @Async
     public ResponseEntity<String> adminDeleteUser(@PathVariable("user_id") long id){
         return userServices.deleteUser(id);
     }
 
     @DeleteMapping(path = "/user")
+    @Async
     public ResponseEntity<String> deleteUser(@RequestHeader("user-token") String token){
         Long userID = verifyUser(token);
         if(userID != null){
@@ -64,6 +72,7 @@ public class UserController {
     }
 
     @PatchMapping(path = "/user/{user_id}")
+    @Async
     public ResponseEntity<String> updateUser(@RequestHeader("user-token") String token, @RequestParam(required = false) String name,
                            @RequestParam(required = false) String email, @RequestParam(required = false) String password){
 
@@ -81,13 +90,28 @@ public class UserController {
     }
 
     @PostMapping("/user/login")
+    @Async
     public ResponseEntity<String> login(@RequestBody User body) {
-        String token = userServices.login(body.getEmail(), body.getPassword());
-        if (token != null) {
-            response.setHeader("user-token", token);
-            return ResponseEntity.ok("User logged in successfully");
-        } else {
+        CompletableFuture<String> tokenFuture = userServices.login(body.getEmail(), body.getPassword());
+        String token = null;
+        try {
+            token = tokenFuture.get();
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid login credentials.");
         }
+        if (token != null) {
+                        response.setHeader("user-token", token);
+                        return ResponseEntity.ok("User logged in successfully");
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid login credentials.");
+                    }
     }
+
+    @PostMapping(path = "/admin/threadCount")
+    public ResponseEntity<String> adjustThreads(@RequestBody RequestThread threads){
+         return userServices.setThreadPoolSize(threads.getThreadCount());
+    }
+
+
 }
+

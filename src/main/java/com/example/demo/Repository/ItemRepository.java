@@ -1,9 +1,6 @@
-package com.example.demo.repository;
-
-import java.util.List;
+package com.example.demo.Repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.models.AppMedia;
