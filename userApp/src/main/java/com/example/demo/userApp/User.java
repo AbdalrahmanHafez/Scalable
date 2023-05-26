@@ -3,10 +3,12 @@ package com.example.demo.userApp;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 
 @Entity
 @Table(name = "playstore_user")
-public class User {
+public class User implements Serializable {
     @Id
     @SequenceGenerator(name = "usersequence", sequenceName = "usersequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usersequence")
@@ -40,6 +42,16 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 
     public void setEmail(String email) {
