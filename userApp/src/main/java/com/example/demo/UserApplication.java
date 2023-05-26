@@ -23,13 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 //@EnableRabbit
 @RestController
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
+
 public class UserApplication
 {
-
 	public static void main(String[] args)
 	{
 		SpringApplication.run(UserApplication.class, args);
 	}
-
 
 }
