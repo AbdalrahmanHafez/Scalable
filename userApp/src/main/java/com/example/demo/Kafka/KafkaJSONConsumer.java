@@ -1,6 +1,6 @@
 package com.example.demo.Kafka;
 
-import com.example.demo.userApp.User;
+import com.example.demo.Models.User;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
