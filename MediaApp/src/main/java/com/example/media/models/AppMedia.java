@@ -1,4 +1,4 @@
-package com.example.demo.models;
+package com.example.media.models;
 
 import java.util.ArrayList;
 

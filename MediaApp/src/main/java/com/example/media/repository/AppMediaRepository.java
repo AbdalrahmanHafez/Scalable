@@ -1,16 +1,12 @@
-package com.example.demo.repository;
-
-import java.util.List;
+package com.example.media.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.models.AppMedia;
-// import com.example.demo.models.GroceryItem;
+import com.example.media.models.AppMedia;
 
 @Repository
-public interface ItemRepository extends MongoRepository<AppMedia, String> {
+public interface AppMediaRepository extends MongoRepository<AppMedia, String> {
 
 	// @Query("{name:'?0'}")
 	// GroceryItem findItemByName(String name);
