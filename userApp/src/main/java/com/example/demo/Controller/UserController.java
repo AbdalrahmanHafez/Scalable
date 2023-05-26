@@ -42,7 +42,7 @@ public class UserController {
 
     @GetMapping(path = "/admin/user")
     public List<User> getUsers(){
-        loggingService.logError("Returning all users in DB");
+        loggingService.logInfo("Returning all users in DB");
         return userServices.getUsers();
     }
 
