@@ -28,6 +28,9 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
+    private LoggingService loggingService;
+
+    @Autowired
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Autowired
@@ -63,9 +66,11 @@ public class UserService {
                 String hashedPassword = passwordEncoder.encode(user.getPassword());
                 user.setPassword(hashedPassword);
                 userRepository.save(user);
+                loggingService.logInfo("User Created successfully",user.getId());
                 return ResponseEntity.ok("User Created successfully");
             }
             else{
+                loggingService.logError("A user with this email already exists, email: " + user.getEmail());
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("A user with this email already exists, email: " + user.getEmail());
             }
         });
@@ -84,6 +89,7 @@ public class UserService {
             return ResponseEntity.ok("User Deleted successfully");
         }
         else{
+            loggingService.logError("User not found, user ID: " + userID);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found, user ID: " + userID);
         }
     }
@@ -93,6 +99,7 @@ public class UserService {
         Boolean userExists = optionalUser.isPresent();
 
         if(!userExists){
+            loggingService.logError("User not found, user ID: " + userID);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found, user ID: " + userID);
         }
 
@@ -100,6 +107,7 @@ public class UserService {
             User user = optionalUser.get();
 
             if(name != null && name.length() > 0 && !Objects.equals(user.getName(), name)){
+                loggingService.logInfo("Name has been changed.",user.getId());
                 user.setName(name);
             }
 
@@ -107,19 +115,27 @@ public class UserService {
                 CompletableFuture<User> duplicateUser = userRepository.findUserByEmail(email);
 
                 try {
-                    if(duplicateUser.get() == null)
+                    if(duplicateUser.get() == null){
                         user.setEmail(email);
-                    else return ResponseEntity.status(HttpStatus.CONFLICT).body("A user with this email already exists, email: " + email);
+                        loggingService.logInfo("Email has been changed.", user.getId());
+                    }
+
+                    else {
+                        loggingService.logError("A user with this email already exists, email: " + email);
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body("A user with this email already exists, email: " + email);}
                 } catch (Exception e) {
+                    loggingService.logError(e.getMessage());
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
                 }
             }
 
             if(password != null && password.length() > 0 && !Objects.equals(user.getPassword(), password)){
+                loggingService.logInfo("Password has been changed.", user.getId());
                 user.setPassword(password);
             }
 
             userRepository.save(user);
+            loggingService.logInfo("User Updated successfully", user.getId());
             return ResponseEntity.ok("User Updated successfully");
         }
     }
@@ -149,6 +165,7 @@ public class UserService {
                 if (verified) {
                     // Generate JWT token
                     System.out.println("Login method ended. Thread: " + Thread.currentThread().getName());
+                    loggingService.logInfo("generated Token for ", logged.getId());
                     return jwtTokenProvider.generateToken(logged.getId());
                 }
             }
