@@ -4,6 +4,7 @@ import com.example.demo.Config.JwtTokenProvider;
 import com.example.demo.Kafka.KafkaJSONProducer;
 import com.example.demo.Kafka.KafkaProducer;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.userApp.LoggingService;
 import com.example.demo.userApp.User;
 import com.example.demo.userApp.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,6 +33,8 @@ public class UserController {
     private KafkaJSONProducer kafkaJSONProducer;
     private final UserService userServices;
     private final UserRepository userRepository;
+    @Autowired
+    private LoggingService loggingService;
 
     @Autowired
     public UserController(UserService userServices, JwtTokenProvider jwtTokenProvider, UserRepository userRepository, KafkaProducer kafkaProducer, KafkaJSONProducer kafkaJSONProducer) {
@@ -44,6 +47,7 @@ public class UserController {
 
     @GetMapping(path = "/admin/user")
     public List<User> getUsers(){
+        loggingService.logInfo("Returning all users in DB");
         return userServices.getUsers();
     }
 
@@ -74,14 +78,18 @@ public class UserController {
 
         try {
             Long userID = jwtTokenProvider.getIDFromToken(token);
-            if(userID == null)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user");
+            if(userID == null){
+                loggingService.logError("Invalid user Token");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user Token");
 
+            }
+             loggingService.logInfo("user update successfully", userID);
             return userServices.updateUser(userID, name, email, password);
 
         }
         catch(Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user");
+            loggingService.logError(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -90,8 +98,10 @@ public class UserController {
         String token = userServices.login(body.getEmail(), body.getPassword());
         if (token != null) {
             response.setHeader("user-token", token);
+            loggingService.logInfo("User logged in successfully");
             return ResponseEntity.ok("User logged in successfully");
         } else {
+            loggingService.logError("Invalid login credentials.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid login credentials.");
         }
     }
