@@ -7,30 +7,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoggingService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingService.class);
+    private static final Logger info = LoggerFactory.getLogger("info");
+    private static final Logger error = LoggerFactory.getLogger("error");
 
     public void logInfo(String message) {
-        logger.info(message);
+        info.info(message);
     }
     public void logInfo(String message, Long ID) {
-        logger.info(message+" , UserID:"+ID);
+        info.info(message+" , UserID:"+ID);
+    }
+    public void logError(String message, Long ID) {
+        error.error(message+" , UserID:"+ID);
+    }
+    public void logError(String message) {
+        error.error(message);
     }
 
     public void logError(String message, Throwable throwable) {
-        logger.error(message, throwable);
-    }
-
-    public void logError(String message, long ID) {
-        logger.error(message+" , UserID:"+ID);
-    }
-    public void logError(String message) {
-        logger.error(message);
-    }
-    public void logDebug(String message, Long ID) {
-        logger.debug(message);
-    }
-
-    public void logWarning(String message) {
-        logger.warn(message);
+        error.error(message, throwable);
     }
 }
+
