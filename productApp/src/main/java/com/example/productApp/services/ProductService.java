@@ -2,6 +2,7 @@ package com.example.productApp.services;
 
 import com.example.productApp.models.Product;
 import com.example.productApp.repositories.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -15,7 +16,7 @@ import java.util.Optional;
 @Service
 public class ProductService {
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private  MongoTemplate mongoTemplate;
     private final ProductRepository productRepository;
 
     @Autowired
