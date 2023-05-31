@@ -2,12 +2,13 @@ package com.example.productApp.commands.commentCommands;
 
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import com.google.gson.JsonObject;
 
 @Component
-public class DeleteCommentCommand extends CommentCommand{
+public class DeleteCommentCommand extends CommentCommand {
     @Override
-    public Object execute(HashMap<String, Object> map) throws Exception {
-        return getService().deleteComment((String)map.get("comment_id"));
+    public Object execute(JsonObject json) throws Exception {
+        return getService().deleteComment(json.get("comment_id").getAsString());
     }
 }
+
