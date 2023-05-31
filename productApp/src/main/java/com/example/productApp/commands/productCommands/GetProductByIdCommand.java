@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class GetProductByIdCommand extends ProductCommand {
 
     @Override
-    public Object execute(JsonObject json) throws Exception {
-        return getProductService().getProductsByCategoryId(json.get("productId").getAsString());
+    public Object execute(HashMap<String, Object> map) throws Exception {
+        return getProductService().getProductById((String)map.get("productId"));
     }
 }

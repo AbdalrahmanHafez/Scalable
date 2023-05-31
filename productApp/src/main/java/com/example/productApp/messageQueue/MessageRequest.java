@@ -1,4 +1,4 @@
-package com.example.productApp.kafka;
+package com.example.productApp.messageQueue;
 
 public record MessageRequest(String message) {
 }

@@ -1,18 +1,19 @@
-package com.example.productApp.kafka;
+package com.example.productApp.messageQueue;
 
-import com.google.gson.Gson;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KafkaListeners {
+public class ProductListeners {
+
+    //private final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     @KafkaListener(
             topics = "productApp" ,
             groupId = "product"
     )
     void listener(String data){
-        //ApiRequest api = new Gson().fromJson(data, ApiRequest.class);
+        //logsSender.sendLogMessage(data);
         System.out.println("Listener received " + data );
     }
 

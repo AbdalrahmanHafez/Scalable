@@ -6,8 +6,9 @@ import java.util.HashMap;
 
 public class GetProductByNameCommand extends ProductCommand{
 
+
     @Override
-    public Object execute(JsonObject json) throws Exception {
-        return getProductService().getProductsByCategoryId(json.get("productName").getAsString());
+    public Object execute(HashMap<String, Object> map) throws Exception {
+        return getProductService().getProductByName((String)map.get("productName"));
     }
 }
