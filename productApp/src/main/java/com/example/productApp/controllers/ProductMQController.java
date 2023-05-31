@@ -1,4 +1,4 @@
-package com.example.productApp.commands.controller;
+package com.example.productApp.controllers;
 
 import com.example.productApp.messageQueue.MessageRequest;
 import org.springframework.kafka.core.KafkaTemplate;
