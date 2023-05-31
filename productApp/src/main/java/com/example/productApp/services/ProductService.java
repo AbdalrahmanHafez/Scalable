@@ -1,8 +1,10 @@
 package com.example.productApp.services;
 
+import com.example.productApp.logs.logsSender;
 import com.example.productApp.models.Product;
 import com.example.productApp.repositories.ProductRepository;
-import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -15,13 +17,18 @@ import java.util.Optional;
 
 @Service
 public class ProductService {
+
     @Autowired
-    private  MongoTemplate mongoTemplate;
+    private MongoTemplate mongoTemplate;
     private final ProductRepository productRepository;
+
+
+    private final Logger logger;
 
     @Autowired
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
+        this.logger = LoggerFactory.getLogger(ProductService.class);
     }
 
     public List<Product> getProducts() {
@@ -33,8 +40,12 @@ public class ProductService {
                 productRepository.findById(productId);
 
         if (productOptional.isEmpty()) {
-            throw new IllegalStateException("App is not here");
-
+            String errorMessage = "App with id" + " " + productId + " " + "is not here";
+            logsSender.sendErrorMessage(errorMessage);
+            throw new IllegalStateException(errorMessage);
+        } else {
+            String message = "App with id" + " " + productId + " " + "has been found successfully";
+            logsSender.sendLogMessage(message);
         }
 
         return productOptional.get();
@@ -44,40 +55,63 @@ public class ProductService {
         Optional<Product> productOptional = Optional.ofNullable(productRepository
                 .findProductByName(productName));
 
-        return productOptional.orElse(null);
+        if (productOptional.isEmpty()) {
+            String errorMessage = "App with name" + " " + productName + " " + "is not here";
+            logsSender.sendErrorMessage(errorMessage);
+            throw new IllegalStateException(errorMessage);
+        } else {
+            String message = "App with name" + " " + productName + " " + "has been found successfully";
+            logsSender.sendLogMessage(message);
+        }
+        return productOptional.get();
     }
 
 
     public List<Product> getProductsByCategoryId(String category_id) {
 
-
         Query query = new Query();
         query.addCriteria(Criteria.where("category_id").is(category_id));
 
-        return mongoTemplate.find(query, Product.class);
+        List<Product> products = mongoTemplate.find(query, Product.class);
+        if (products.isEmpty()) {
+            String errorMessage = "No Apps in this category" + category_id;
+            logsSender.sendErrorMessage(errorMessage);
+        } else {
+            String message = "Apps in category" + " " + category_id + " " + "have been found successfully";
+            logsSender.sendLogMessage(message);
+        }
+
+        return products;
     }
 
-    public void addNewProduct(Product product) {
+    public String addNewProduct(Product product) {
         Optional<Product> productOptional =
                 Optional.ofNullable(productRepository.findProductByName(product.getProductName()));
 
         if (productOptional.isPresent()) {
-            throw new IllegalStateException("name is taken");
-
+            String errorMessage = "Name" + " " + product.getProductName() + " " + "is taken";
+            logsSender.sendErrorMessage(errorMessage);
+            throw new IllegalStateException(errorMessage);
         }
         productRepository.save(product);
+        String message = "App with id" + " " + product.getProductId() + " " + "has been added successfully with id" ;
+        logsSender.sendLogMessage(message);
+        return message;
     }
 
 
-    public void deleteProduct(String productId) {
+    public String deleteProduct(String productId) {
         Optional<Product> productOptional = productRepository
                 .findById(productId);
         if (productOptional.isEmpty()) {
-            throw new IllegalStateException(
-                    "product with id" + " " + productId + " " + "does not exists"
-            );
+            String errorMessage = "App with id" + " " + productId + " " + "does not exists";
+            logsSender.sendErrorMessage(errorMessage);
+            throw new IllegalStateException(errorMessage);
         }
         productRepository.deleteById(productId);
+        String message = "App with id" + " " + productId + " " + "deleted successfully";
+        logsSender.sendLogMessage(message);
+        return message;
     }
 
 
@@ -87,9 +121,10 @@ public class ProductService {
                               String version) {
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "product with id" + " " + productId + " " + "does not exists"
-                ));
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "App with id" + " " + productId + " " + "does not exists"
+                        ));
         ;
         if (productName != null &&
                 productName.length() > 0 &&
@@ -109,6 +144,7 @@ public class ProductService {
             product.setVersion(version);
         }
         productRepository.save(product);
-
+        String message = "App with id" + " " + productId + " " + "has been updated successfully";
+        logsSender.sendLogMessage(message);
     }
 }
