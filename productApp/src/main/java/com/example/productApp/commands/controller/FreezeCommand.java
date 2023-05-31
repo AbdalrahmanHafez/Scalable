@@ -4,10 +4,12 @@ import com.example.productApp.commands.Command;
 
 import java.util.HashMap;
 
-public class FreezeCommand extends Command {
+import com.google.gson.JsonObject;
+
+public class FreezeCommand implements Command {
 
     @Override
-    public Object execute(HashMap<String, Object> map) throws Exception {
+    public Object execute(JsonObject json) throws Exception {
         PropertiesHandler.addProperty("freeze", "true");
         return new Object();
     }
