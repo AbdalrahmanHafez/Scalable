@@ -4,11 +4,15 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonObject;
 
+import java.util.HashMap;
+
 @Component
 public class DeleteCommentCommand extends CommentCommand {
+
+
     @Override
-    public Object execute(JsonObject json) throws Exception {
-        return getService().deleteComment(json.get("comment_id").getAsString());
+    public Object execute(HashMap<String, Object> map) throws Exception {
+        return getService().deleteComment((String)map.get("comment_id"));
     }
 }
 
