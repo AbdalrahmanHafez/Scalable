@@ -147,4 +147,182 @@ public class ProductService {
         String message = "App with id" + " " + productId + " " + "has been updated successfully";
         logsSender.sendLogMessage(message);
     }
+    public void updateAverageRating(String productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "product with id" + " " + productId + " " + "does not exists"
+                ));
+        List<Integer> TheRating= product.getRating();
+        int zeroStaramount = TheRating.get(0);
+        int oneStaramount = TheRating.get(1);
+        int twoStaramount = TheRating.get(2);
+        int threeStaramount = TheRating.get(3);
+        int fourStaramount = TheRating.get(4);
+
+        int totalamount=zeroStaramount+oneStaramount+twoStaramount+threeStaramount+fourStaramount;
+
+        double newaveragerating=((double)((zeroStaramount*0)+(oneStaramount)+(twoStaramount*2)+(threeStaramount*3)+(fourStaramount*4))/totalamount);
+
+        product.setaveragerating(newaveragerating);
+
+
+        productRepository.save(product);
+
+    }
+    public void increase0starrating(String productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "product with id" + " " + productId + " " + "does not exists"
+                ));
+        List<Integer> TheRating= product.getRating();
+        int zeroStar;
+        zeroStar = TheRating.get(0);
+        zeroStar=zeroStar+1;
+
+        TheRating.set(0, zeroStar);
+        TheRating= product.getRating();
+        int zeroStaramount = TheRating.get(0);
+        int oneStaramount = TheRating.get(1);
+        int twoStaramount = TheRating.get(2);
+        int threeStaramount = TheRating.get(3);
+        int fourStaramount = TheRating.get(4);
+
+        int totalamount=zeroStaramount+oneStaramount+twoStaramount+threeStaramount+fourStaramount;
+
+        double newaveragerating=((double)((zeroStaramount*0)+(oneStaramount)+(twoStaramount*2)+(threeStaramount*3)+(fourStaramount*4))/totalamount);
+
+        product.setaveragerating(newaveragerating);
+
+
+        productRepository.save(product);
+
+    }
+    public void increase1starrating(String productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "product with id" + " " + productId + " " + "does not exists"
+                ));
+        List<Integer> TheRating= product.getRating();
+        int oneStar;
+        oneStar = TheRating.get(1);
+        oneStar=oneStar+1;
+        // String starvalue=oneStar.substring(0, 6);
+        //     String amount=oneStar.substring(7);
+        //     int amountinint=Integer.parseInt(amount);
+        //             amountinint=amountinint+1;
+        // String finalvalue="";
+        // finalvalue=finalvalue+starvalue+""+amountinint;
+
+        TheRating.set(1, oneStar);
+
+
+        TheRating= product.getRating();
+        int zeroStaramount = TheRating.get(0);
+        int oneStaramount = TheRating.get(1);
+        int twoStaramount = TheRating.get(2);
+        int threeStaramount = TheRating.get(3);
+        int fourStaramount = TheRating.get(4);
+
+        int totalamount=zeroStaramount+oneStaramount+twoStaramount+threeStaramount+fourStaramount;
+
+        double newaveragerating=((double)((zeroStaramount*0)+(oneStaramount)+(twoStaramount*2)+(threeStaramount*3)+(fourStaramount*4))/totalamount);
+
+        product.setaveragerating(newaveragerating);
+
+        productRepository.save(product);
+
+    }
+
+
+
+
+    public void increase2starrating(String productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "product with id" + " " + productId + " " + "does not exists"
+                ));
+        List<Integer> TheRating= product.getRating();
+        int twoStar;
+        twoStar = TheRating.get(2);
+        twoStar=twoStar+1;
+
+        TheRating.set(2, twoStar);
+
+
+        TheRating = product.getRating();
+        int zeroStaramount = TheRating.get(0);
+        int oneStaramount = TheRating.get(1);
+        int twoStaramount = TheRating.get(2);
+        int threeStaramount = TheRating.get(3);
+        int fourStaramount = TheRating.get(4);
+
+        int totalamount=zeroStaramount+oneStaramount+twoStaramount+threeStaramount+fourStaramount;
+
+        double newaveragerating=((double)((zeroStaramount*0)+(oneStaramount)+(twoStaramount*2)+(threeStaramount*3)+(fourStaramount*4))/totalamount);
+
+        product.setaveragerating(newaveragerating);
+
+        productRepository.save(product);
+
+    }
+
+    public void increase3starrating(String productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "product with id" + " " + productId + " " + "does not exists"
+                ));
+        List<Integer> TheRating= product.getRating();
+        int threeStar;
+        threeStar = TheRating.get(3);
+        threeStar=threeStar+1;
+
+        TheRating.set(3, threeStar);
+
+
+        TheRating= product.getRating();
+        int zeroStaramount = TheRating.get(0);
+        int oneStaramount = TheRating.get(1);
+        int twoStaramount = TheRating.get(2);
+        int threeStaramount = TheRating.get(3);
+        int fourStaramount = TheRating.get(4);
+
+        int totalamount=zeroStaramount+oneStaramount+twoStaramount+threeStaramount+fourStaramount;
+
+        double newaveragerating=((double)((zeroStaramount*0)+(oneStaramount)+(twoStaramount*2)+(threeStaramount*3)+(fourStaramount*4))/totalamount);
+
+        product.setaveragerating(newaveragerating);
+
+        productRepository.save(product);
+
+    }
+    public void increase4starrating(String productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "product with id" + " " + productId + " " + "does not exists"
+                ));
+        List<Integer> TheRating= product.getRating();
+        int fourStar;
+        fourStar = TheRating.get(4);
+        fourStar=fourStar+1;
+
+        TheRating.set(4, fourStar);
+
+
+        TheRating= product.getRating();
+        int zeroStaramount = TheRating.get(0);
+        int oneStaramount = TheRating.get(1);
+        int twoStaramount = TheRating.get(2);
+        int threeStaramount = TheRating.get(3);
+        int fourStaramount = TheRating.get(4);
+
+        int totalamount=zeroStaramount+oneStaramount+twoStaramount+threeStaramount+fourStaramount;
+
+        double newaveragerating=((double)((zeroStaramount*0)+(oneStaramount)+(twoStaramount*2)+(threeStaramount*3)+(fourStaramount*4))/totalamount);
+
+        product.setaveragerating(newaveragerating);
+
+        productRepository.save(product);
+
+    }
+
 }

@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 
 @Document("Product")
 public class Product {
@@ -23,6 +25,10 @@ public class Product {
 
     private String category_id;
 
+    public double AverageRating;
+
+    public List<Integer> TheRating;
+
 //    @DBRef
 //    private Category category;
 
@@ -34,25 +40,33 @@ public class Product {
                    String description,
                    int download_count,
                    String version,
-                   String category_id) {
+                   String category_id,
+                   double AverageRating,
+                   List<Integer> TheRating) {
         this.productId = productId;
         this.productName = productName;
         this.description = description;
         this.download_count = download_count;
         this.version = version;
         this.category_id = category_id;
+        this.AverageRating=AverageRating;
+        this.TheRating=TheRating;
     }
 
     public Product(String productName,
                    String description,
                    int download_count,
                    String version,
-                   String category_id) {
+                   String category_id,
+                   double AverageRating,
+                   List<Integer> TheRating) {
         this.productName = productName;
         this.description = description;
         this.download_count = download_count;
         this.version = version;
         this.category_id = category_id;
+        this.AverageRating=AverageRating;
+        this.TheRating=TheRating;
     }
 
     public String getProductId() {
@@ -102,4 +116,15 @@ public class Product {
     public void setCategory_id(String category_id) {
         this.category_id = category_id;
     }
+
+    public void setaveragerating(double AverageRating) {
+        this.AverageRating= AverageRating;
+    }
+    public double getaveragerating() {
+        return AverageRating;
+    }
+    public List<Integer> getRating() {
+        return TheRating;
+    }
+
 }

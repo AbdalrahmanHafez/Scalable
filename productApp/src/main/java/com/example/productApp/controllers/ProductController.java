@@ -66,5 +66,57 @@ public class ProductController {
 
         productService.updateProduct(productId, productName, description, version);
     }
+    @PutMapping(path = "/increase0starrating/{productId}")
+    public void increase0star(
+            @PathVariable("productId") String productId
+    ) {
+        productService.increase0starrating(productId);
 
+    }
+
+
+
+    @PutMapping(path = "/increase1starrating/{productId}")
+    public void increase1star(
+            @PathVariable("productId") String productId
+    ) {
+        productService.increase1starrating(productId);
+
+    }
+
+
+    @PutMapping(path = "/increase2starrating/{productId}")
+    public void increase2star(
+            @PathVariable("productId") String productId
+    ) {
+        productService.increase2starrating(productId);
+
+    }
+
+
+
+    @PutMapping(path = "/increase3starrating/{productId}")
+    public void increase3star(
+            @PathVariable("productId") String productId
+    ) {
+        productService.increase3starrating(productId);
+
+    }
+
+
+    @PutMapping(path = "/increase4starrating/{productId}")
+    public void increase4star(
+            @PathVariable("productId") String productId
+    ) {
+        productService.increase4starrating(productId);
+
+    }
+
+    @PutMapping(path = "/updateAverageRating/{productId}")
+    public void updateAverageRate(
+            @PathVariable("productId") String productId
+    ) {
+        productService.updateAverageRating(productId);
+
+    }
 }
