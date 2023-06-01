@@ -1,12 +1,12 @@
 package com.example.productApp.commands.productCommands;
 
 
-import java.util.Map;
+import java.util.HashMap;
 
 public class GetProductByIdCommand extends ProductCommand {
 
     @Override
-    public Object execute(Map<String, Object> map) throws Exception {
+    public Object execute(HashMap<String, Object> map) throws Exception {
         return getProductService().getProductById((String)map.get("productId"));
     }
 }

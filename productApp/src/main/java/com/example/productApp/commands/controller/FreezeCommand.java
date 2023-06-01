@@ -2,12 +2,12 @@ package com.example.productApp.commands.controller;
 
 import com.example.productApp.commands.Command;
 
-import java.util.Map;
+import java.util.HashMap;
 
 public class FreezeCommand implements Command {
 
     @Override
-    public Object execute(Map<String , Object> map) throws Exception {
+    public Object execute(HashMap<String , Object> map) throws Exception {
         PropertiesHandler.addProperty("freeze", "true");
         return new Object();
     }

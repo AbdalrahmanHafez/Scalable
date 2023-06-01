@@ -10,14 +10,9 @@ public class UpdateProductCommand extends ProductCommand {
     public Object execute(Map<String, Object> map) throws Exception {
         String productId = (String) map.get("productId");
         String productName = (String) map.get("productName");
-        ;
         String description = (String) map.get("description");
         String version = (String) map.get("version");
         Product productToUpdate = getProductService().getProductById(productId);
-
-        if (productToUpdate == null) {
-            throw new IllegalArgumentException("Product not found for ID: " + productId);
-        }
 
         if (map.containsKey("productName")) {
             productToUpdate.setProductName((String) map.get("productName"));

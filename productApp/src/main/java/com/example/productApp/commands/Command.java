@@ -1,8 +1,8 @@
 package com.example.productApp.commands;
 
 
-import java.util.Map;
+import java.util.HashMap;
 
 public interface Command {
-    Object execute(Map<String, Object> map) throws Exception;
+    Object execute(HashMap<String, Object> map) throws Exception;
 }
