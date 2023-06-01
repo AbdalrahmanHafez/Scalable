@@ -19,11 +19,11 @@ public class CategoryService {
         this.categoryRepo = categoryRepo;
     }
 
-    public List<Category> getAllCategories(){
+    public List<Category> getAllCategories() {
         return categoryRepo.findAll();
     }
 
-    public Category getCategory(int id){
+    public Category getCategory(int id) {
         return categoryRepo.findById(id);
     }
 

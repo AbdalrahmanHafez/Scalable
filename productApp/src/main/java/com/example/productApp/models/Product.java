@@ -1,11 +1,9 @@
 package com.example.productApp.models;
 
-
 import jdk.jfr.Category;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 
 @Document("Product")
 public class Product {
@@ -23,18 +21,18 @@ public class Product {
 
     private String category_id;
 
-//    @DBRef
-//    private Category category;
+    // @DBRef
+    // private Category category;
 
     public Product() {
     }
 
     public Product(String productId,
-                   String productName,
-                   String description,
-                   int download_count,
-                   String version,
-                   String category_id) {
+            String productName,
+            String description,
+            int download_count,
+            String version,
+            String category_id) {
         this.productId = productId;
         this.productName = productName;
         this.description = description;
@@ -44,10 +42,10 @@ public class Product {
     }
 
     public Product(String productName,
-                   String description,
-                   int download_count,
-                   String version,
-                   String category_id) {
+            String description,
+            int download_count,
+            String version,
+            String category_id) {
         this.productName = productName;
         this.description = description;
         this.download_count = download_count;

@@ -1,9 +1,10 @@
-package com.example.media.repository;
+package app.media.repositories;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Repository;
 
-import com.example.media.models.AppMedia;
+import app.media.models.AppMedia;
 
 @Repository
 public interface AppMediaRepository extends MongoRepository<AppMedia, String> {

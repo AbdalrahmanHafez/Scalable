@@ -28,8 +28,7 @@ public class ProductService {
     }
 
     public Product getProductById(String productId) {
-        Optional<Product> productOptional =
-                productRepository.findById(productId);
+        Optional<Product> productOptional = productRepository.findById(productId);
 
         if (productOptional.isEmpty()) {
             throw new IllegalStateException("App is not here");
@@ -46,9 +45,7 @@ public class ProductService {
         return productOptional.orElse(null);
     }
 
-
     public List<Product> getProductsByCategoryId(String category_id) {
-
 
         Query query = new Query();
         query.addCriteria(Criteria.where("category_id").is(category_id));
@@ -57,8 +54,8 @@ public class ProductService {
     }
 
     public void addNewProduct(Product product) {
-        Optional<Product> productOptional =
-                Optional.ofNullable(productRepository.findProductByName(product.getProductName()));
+        Optional<Product> productOptional = Optional
+                .ofNullable(productRepository.findProductByName(product.getProductName()));
 
         if (productOptional.isPresent()) {
             throw new IllegalStateException("name is taken");
@@ -67,28 +64,24 @@ public class ProductService {
         productRepository.save(product);
     }
 
-
     public void deleteProduct(String productId) {
         Optional<Product> productOptional = productRepository
                 .findById(productId);
         if (productOptional.isEmpty()) {
             throw new IllegalStateException(
-                    "product with id" + " " + productId + " " + "does not exists"
-            );
+                    "product with id" + " " + productId + " " + "does not exists");
         }
         productRepository.deleteById(productId);
     }
 
-
     public void updateProduct(String productId,
-                              String productName,
-                              String description,
-                              String version) {
+            String productName,
+            String description,
+            String version) {
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "product with id" + " " + productId + " " + "does not exists"
-                ));
+                        "product with id" + " " + productId + " " + "does not exists"));
         ;
         if (productName != null &&
                 productName.length() > 0 &&
