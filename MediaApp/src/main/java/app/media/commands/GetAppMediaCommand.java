@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import app.media.controllers.MediaApplicationController;
 import app.media.models.AppMedia;
 import app.media.repositories.AppMediaRepository;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class GetAppMediaCommand extends Command {
 
@@ -23,7 +25,6 @@ public class GetAppMediaCommand extends Command {
 
 	@Override
 	public ResponseEntity execute(HashMap<String, Object> map) {
-		System.out.println("[Command - GetAppMedia] called");
 
 		String app_id = (String) map.get("app_id");
 
@@ -34,6 +35,8 @@ public class GetAppMediaCommand extends Command {
 		}
 
 		AppMedia appMedia = appMediaOp.get();
+
+		log.info(String.format("[INFO] App media for %s, retrieved successfully", app_id));
 
 		return new ResponseEntity(appMedia.media, HttpStatus.OK);
 	}

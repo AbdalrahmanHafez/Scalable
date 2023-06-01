@@ -33,6 +33,8 @@ import org.springframework.web.multipart.MultipartFile;
 import app.media.commands.Command;
 import app.media.models.AppMedia;
 import app.media.repositories.AppMediaRepository;
+import lombok.extern.slf4j.Slf4j;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -62,6 +64,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @RestController
 public class MediaApplicationController {
 
@@ -133,11 +136,14 @@ public class MediaApplicationController {
 	// Controller Commands
 	@PostMapping(path = "/set_max_thread_count/{thread_count}")
 	public ResponseEntity<String> adjustThreads(@PathVariable String thread_count) {
+		// TODO: make it a command
 		try {
 			threadPoolTaskExecutor.setMaxPoolSize(Integer.parseInt(thread_count));
-			System.out.println(String.format("Thread count is set to %d", thread_count));
+			// System.out.println(String.format("Thread count is set to %d", thread_count));
+			log.info(String.format("Thread count is set to %d", thread_count));
 		} catch (Exception e) {
-			System.out.println("[ERROR]" + e.getMessage());
+			// System.out.println("[ERROR]" + e.getMessage());
+			log.error("[ERROR]" + e.getMessage());
 			return new ResponseEntity<String>("Error", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<String>("OK", HttpStatus.OK);
@@ -165,16 +171,20 @@ public class MediaApplicationController {
 
 		CompletableFuture<String> res = CompletableFuture.supplyAsync(() -> {
 			System.out.println(String.format("[start] Thread, %s", copyValue));
+			log.info("Thread started");
 
 			if (copyValue.equals("value: 1")) {
-				throw new RuntimeException("test");
+				log.error("Error occured");
+				// throw new RuntimeException("test");
 			}
 
 			try {
 				Thread.currentThread().sleep(3 * 1000);
 				System.out.println(String.format("[End] Thread, %s", copyValue));
+				log.info("Thread ended");
 			} catch (InterruptedException e) {
-				System.out.println("InterruptedException");
+				log.error("InterruptedException " + e.getMessage());
+				// System.out.println("Interruptedxception");
 				e.printStackTrace();
 			}
 

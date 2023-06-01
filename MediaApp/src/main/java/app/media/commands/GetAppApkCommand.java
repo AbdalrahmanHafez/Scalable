@@ -32,6 +32,8 @@ import app.media.commands.Command;
 import app.media.controllers.MediaApplicationController;
 import app.media.models.AppMedia;
 import app.media.repositories.AppMediaRepository;
+import lombok.extern.slf4j.Slf4j;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -55,6 +57,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+@Slf4j
 @Component
 public class GetAppApkCommand extends Command {
 
@@ -99,9 +102,12 @@ public class GetAppApkCommand extends Command {
 			try {
 				IOUtils.readFully(operations.getResource(gridFSFile).getInputStream(), data);
 			} catch (Exception e) {
+				log.error("Error while reading file", e.getMessage());
 				ResponseEntity.badRequest().body("Error while reading file");
 			}
 		}
+
+		log.info(String.format("[INFO] App apk for %s, retrieved successfully", app_id));
 
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(file_type))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file_name + "\"")
