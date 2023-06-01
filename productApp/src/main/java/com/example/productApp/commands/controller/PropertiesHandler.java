@@ -1,6 +1,9 @@
 package com.example.productApp.commands.controller;
 
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -11,6 +14,8 @@ public class PropertiesHandler {
     static Properties properties = new Properties();
     static OutputStream output;
     static InputStream input;
+//    static Resource resource = new ClassPathResource("application.properties");
+
 
     public static void loadPropertiesHandler(){
         try {
@@ -22,6 +27,9 @@ public class PropertiesHandler {
             properties.setProperty("max_db_threads", "20");
             properties.setProperty("max_app_threads", "20");
             properties.setProperty("freeze", "false");
+            properties.setProperty("logging.level.root", "info");
+
+            System.out.println("success");
 
             properties.store(output, null);
         } catch (Exception e) {
