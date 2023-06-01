@@ -2,9 +2,8 @@ package com.example.productApp.commands.commentCommands;
 
 import org.springframework.stereotype.Component;
 
-import com.google.gson.JsonObject;
-
 import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class DeleteCommentCommand extends CommentCommand{

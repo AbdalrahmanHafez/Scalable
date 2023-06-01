@@ -4,6 +4,7 @@ import com.example.productApp.models.Comment;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class CreateCommentCommand extends CommentCommand{

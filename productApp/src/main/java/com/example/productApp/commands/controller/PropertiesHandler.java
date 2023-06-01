@@ -46,7 +46,6 @@ public class PropertiesHandler {
             properties.store(output, null);
         } catch(Exception e) {
             System.out.println("error in addProperty");
-
         }
     }
 

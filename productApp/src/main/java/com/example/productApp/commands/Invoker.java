@@ -1,7 +1,5 @@
 package com.example.productApp.commands;
 
-import com.example.productApp.commands.commentCommands.CommentCommand;
-import com.google.gson.JsonObject;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -13,7 +11,7 @@ public class Invoker {
         commExec = comm;
     }
     public void ExecuteCommand(HashMap<String, Object> request) throws Exception {
-        commExec.execute(request);
+        commExec.execute( request);
     }
 
 }

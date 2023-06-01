@@ -1,7 +1,6 @@
 package com.example.productApp.commands.controller;
 
 import com.example.productApp.commands.Command;
-import com.google.gson.JsonObject;
 
 import java.util.HashMap;
 

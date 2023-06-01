@@ -1,6 +1,5 @@
 package com.example.productApp.commands.categoryCommands;
 
-import com.example.productApp.commands.Command;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
