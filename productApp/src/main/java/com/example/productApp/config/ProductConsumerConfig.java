@@ -12,9 +12,11 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @Configuration
 public class ProductConsumerConfig {
 
+    //private final Logger logger = LoggerFactory.getLogger(getClass());
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 

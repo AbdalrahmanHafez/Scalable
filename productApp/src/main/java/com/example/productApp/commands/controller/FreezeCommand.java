@@ -2,14 +2,12 @@ package com.example.productApp.commands.controller;
 
 import com.example.productApp.commands.Command;
 
-import java.util.HashMap;
-
-import com.google.gson.JsonObject;
+import java.util.Map;
 
 public class FreezeCommand implements Command {
 
     @Override
-    public Object execute(JsonObject json) throws Exception {
+    public Object execute(Map<String , Object> map) throws Exception {
         PropertiesHandler.addProperty("freeze", "true");
         return new Object();
     }

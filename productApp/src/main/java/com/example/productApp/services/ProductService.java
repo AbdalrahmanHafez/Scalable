@@ -23,12 +23,12 @@ public class ProductService {
     private final ProductRepository productRepository;
 
 
-    private final Logger logger;
+    //private final Logger logger;
 
     @Autowired
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.logger = LoggerFactory.getLogger(ProductService.class);
+        //this.logger = LoggerFactory.getLogger(ProductService.class);
     }
 
     public List<Product> getProducts() {
@@ -42,12 +42,11 @@ public class ProductService {
         if (productOptional.isEmpty()) {
             String errorMessage = "App with id" + " " + productId + " " + "is not here";
             logsSender.sendErrorMessage(errorMessage);
-            throw new IllegalStateException(errorMessage);
+            return null;
         } else {
             String message = "App with id" + " " + productId + " " + "has been found successfully";
             logsSender.sendLogMessage(message);
         }
-
         return productOptional.get();
     }
 
@@ -58,7 +57,7 @@ public class ProductService {
         if (productOptional.isEmpty()) {
             String errorMessage = "App with name" + " " + productName + " " + "is not here";
             logsSender.sendErrorMessage(errorMessage);
-            throw new IllegalStateException(errorMessage);
+            return null;
         } else {
             String message = "App with name" + " " + productName + " " + "has been found successfully";
             logsSender.sendLogMessage(message);
@@ -80,22 +79,22 @@ public class ProductService {
             String message = "Apps in category" + " " + category_id + " " + "have been found successfully";
             logsSender.sendLogMessage(message);
         }
-
         return products;
     }
 
     public String addNewProduct(Product product) {
         Optional<Product> productOptional =
                 Optional.ofNullable(productRepository.findProductByName(product.getProductName()));
-
+        String message;
         if (productOptional.isPresent()) {
-            String errorMessage = "Name" + " " + product.getProductName() + " " + "is taken";
-            logsSender.sendErrorMessage(errorMessage);
-            throw new IllegalStateException(errorMessage);
+             message = "Name" + " " + product.getProductName() + " " + "is taken";
+            logsSender.sendErrorMessage(message);
         }
-        productRepository.save(product);
-        String message = "App with id" + " " + product.getProductId() + " " + "has been added successfully with id" ;
-        logsSender.sendLogMessage(message);
+        else {
+            productRepository.save(product);
+             message = "App with id" + " " + product.getProductId() + " " + "has been added successfully with id";
+            logsSender.sendLogMessage(message);
+        }
         return message;
     }
 
@@ -103,49 +102,59 @@ public class ProductService {
     public String deleteProduct(String productId) {
         Optional<Product> productOptional = productRepository
                 .findById(productId);
+        String message;
         if (productOptional.isEmpty()) {
-            String errorMessage = "App with id" + " " + productId + " " + "does not exists";
-            logsSender.sendErrorMessage(errorMessage);
-            throw new IllegalStateException(errorMessage);
+            message = "App with id" + " " + productId + " " + "does not exists";
+            logsSender.sendErrorMessage(message);
+        }else {
+            productRepository.deleteById(productId);
+             message = "App with id" + " " + productId + " " + "deleted successfully";
+            logsSender.sendLogMessage(message);
         }
-        productRepository.deleteById(productId);
-        String message = "App with id" + " " + productId + " " + "deleted successfully";
-        logsSender.sendLogMessage(message);
         return message;
     }
 
-
-    public void updateProduct(String productId,
+    public String updateProduct(String productId,
                               String productName,
                               String description,
                               String version) {
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() ->
-                        new IllegalStateException(
-                                "App with id" + " " + productId + " " + "does not exists"
-                        ));
-        ;
-        if (productName != null &&
-                productName.length() > 0 &&
-                !Objects.equals(product.getProductName(), productName)) {
-            product.setProductName(productName);
+//        Product product = productRepository.findById(productId)
+//                .orElseThrow(() ->
+//                        new IllegalStateException(
+//                                "App with id" + " " + productId + " " + "does not exists"
+//                        ));
+//        ;
+        Optional<Product> productOptional = productRepository
+                .findById(productId);
+        String message;
+        if (productOptional.isEmpty()) {
+            message = "App with id" + " " + productId + " " + "does not exists";
+            logsSender.sendErrorMessage(message);
         }
+        else {
+            if (productName != null &&
+                    productName.length() > 0 &&
+                    !Objects.equals(productOptional.get().getProductName(), productName)) {
+                productOptional.get().setProductName(productName);
+            }
 
-        if (description != null &&
-                description.length() > 0 &&
-                !Objects.equals(product.getDescription(), description)) {
-            product.setDescription(description);
-        }
+            if (description != null &&
+                    description.length() > 0 &&
+                    !Objects.equals(productOptional.get().getDescription(), description)) {
+                productOptional.get().setDescription(description);
+            }
 
-        if (version != null &&
-                version.length() > 0 &&
-                !Objects.equals(product.getVersion(), version)) {
-            product.setVersion(version);
+            if (version != null &&
+                    version.length() > 0 &&
+                    !Objects.equals(productOptional.get().getVersion(), version)) {
+                productOptional.get().setVersion(version);
+            }
+            productRepository.save(productOptional.get());
+            message = "App with id" + " " + productId + " " + "has been updated successfully";
+            logsSender.sendLogMessage(message);
         }
-        productRepository.save(product);
-        String message = "App with id" + " " + productId + " " + "has been updated successfully";
-        logsSender.sendLogMessage(message);
+        return message;
     }
     public void updateAverageRating(String productId){
         Product product = productRepository.findById(productId)

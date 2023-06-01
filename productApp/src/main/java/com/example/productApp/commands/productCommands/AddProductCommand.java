@@ -4,11 +4,12 @@ package com.example.productApp.commands.productCommands;
 import com.example.productApp.models.Product;
 
 
-import java.util.HashMap;
+
+import java.util.Map;
 
 public class AddProductCommand extends ProductCommand {
     @Override
-    public Object execute(HashMap<String, Object> map) throws Exception {
+    public Object execute(Map<String, Object> map) throws Exception {
         Product product = new Product();
         product.setProductId((String) map.get("productId"));
         product.setProductName((String) map.get("productName"));

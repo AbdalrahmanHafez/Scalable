@@ -1,9 +1,8 @@
 package com.example.productApp.commands;
 
-import com.google.gson.JsonObject;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface Command {
-    Object execute(HashMap<String, Object> map) throws Exception;
+    Object execute(Map<String, Object> map) throws Exception;
 }
