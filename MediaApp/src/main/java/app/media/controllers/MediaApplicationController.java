@@ -17,8 +17,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,60 +55,92 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 @RestController
 public class MediaApplicationController {
+
+	@Autowired
+	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
 	@Autowired
 	private Map<String, Command> commands;
 
-	@Autowired
-	AppMediaRepository appRepo;
-
-	@Autowired
-	private GridFsTemplate gridFsTemplate;
-
-	@Autowired
-	private GridFsOperations operations;
-
 	@PostMapping("/uploadAppAPK")
-	public ResponseEntity<String> PostAppApk(
+	@Async
+	public CompletableFuture<ResponseEntity<String>> PostAppApk(
 			@RequestParam("app_id") String app_id,
 			@RequestParam("data") MultipartFile apkData) throws IOException {
 
-		HashMap<String, Object> body = new HashMap<>();
-		body.put("app_id", app_id);
-		body.put("data", apkData);
+		return CompletableFuture.supplyAsync(() -> {
 
-		return commands.get("postAppApkCommand").execute(body);
+			HashMap<String, Object> body = new HashMap<>();
+			body.put("app_id", app_id);
+			body.put("data", apkData);
+
+			return commands.get("postAppApkCommand").execute(body);
+		}, threadPoolTaskExecutor);
+
 	}
 
 	@PostMapping("/uploadAppMedia")
-	public ResponseEntity<String> PostAppMedia(
+	@Async
+	public CompletableFuture<ResponseEntity<String>> PostAppMedia(
 			@RequestParam("app_id") String app_id,
 			@RequestParam("media_type") String media_type,
 			@RequestParam("link") String link) throws IOException {
 
-		HashMap<String, Object> body = new HashMap<>();
-		body.put("app_id", app_id);
-		body.put("media_type", media_type);
-		body.put("link", link);
+		return CompletableFuture.supplyAsync(() -> {
+			HashMap<String, Object> body = new HashMap<>();
+			body.put("app_id", app_id);
+			body.put("media_type", media_type);
+			body.put("link", link);
 
-		return commands.get("postAppMediaCommand").execute(body);
+			return commands.get("postAppMediaCommand").execute(body);
+		}, threadPoolTaskExecutor);
+
 	}
 
 	@GetMapping("/getAppAPK/{app_id}")
-	public ResponseEntity<ByteArrayResource> GetAppApk(@PathVariable String app_id) throws IOException {
-		HashMap<String, Object> body = new HashMap<>();
-		body.put("app_id", app_id);
+	@Async
+	public CompletableFuture<ResponseEntity<ByteArrayResource>> GetAppApk(@PathVariable String app_id)
+			throws IOException {
+		return CompletableFuture.supplyAsync(() -> {
+			HashMap<String, Object> body = new HashMap<>();
+			body.put("app_id", app_id);
 
-		return commands.get("getAppApkCommand").execute(body);
+			return commands.get("getAppApkCommand").execute(body);
+		}, threadPoolTaskExecutor);
 	}
 
 	@GetMapping("/getAppMedia/{app_id}")
-	public ResponseEntity<String> GetAppMedia(@PathVariable String app_id) throws IOException {
-		HashMap<String, Object> body = new HashMap<>();
-		body.put("app_id", app_id);
+	@Async
+	public CompletableFuture<ResponseEntity<String>> GetAppMedia(@PathVariable String app_id) throws IOException {
+		return CompletableFuture.supplyAsync(() -> {
+			HashMap<String, Object> body = new HashMap<>();
+			body.put("app_id", app_id);
 
-		return commands.get("getAppMediaCommand").execute(body);
+			return commands.get("getAppMediaCommand").execute(body);
+		}, threadPoolTaskExecutor);
+
+	}
+
+	// Controller Commands
+	@PostMapping(path = "/set_max_thread_count/{thread_count}")
+	public ResponseEntity<String> adjustThreads(@PathVariable String thread_count) {
+		try {
+			threadPoolTaskExecutor.setMaxPoolSize(Integer.parseInt(thread_count));
+			System.out.println(String.format("Thread count is set to %d", thread_count));
+		} catch (Exception e) {
+			System.out.println("[ERROR]" + e.getMessage());
+			return new ResponseEntity<String>("Error", HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<String>("OK", HttpStatus.OK);
 	}
 
 	@PostMapping("/test2")
@@ -118,17 +153,43 @@ public class MediaApplicationController {
 		return "OK";
 	}
 
+	static int value = 0;
+
 	@GetMapping("/test")
-	public String sendMessage() {
-		System.out.println("[TEST] TEST is called");
+	@Async
+	public CompletableFuture<String> test() {
+		// System.out.println("[TEST] TEST is called");
 
-		System.out.println(commands.size());
+		value += 1;
+		String copyValue = String.format("value: %d", value);
 
-		for (String key : commands.keySet()) {
-			System.out.println(key);
-		}
+		CompletableFuture<String> res = CompletableFuture.supplyAsync(() -> {
+			System.out.println(String.format("[start] Thread, %s", copyValue));
 
-		return "OK";
+			if (copyValue.equals("value: 1")) {
+				throw new RuntimeException("test");
+			}
+
+			try {
+				Thread.currentThread().sleep(3 * 1000);
+				System.out.println(String.format("[End] Thread, %s", copyValue));
+			} catch (InterruptedException e) {
+				System.out.println("InterruptedException");
+				e.printStackTrace();
+			}
+
+			return "OK";
+		}, threadPoolTaskExecutor);
+
+		return res;
+
+		// System.out.println(commands.size());
+
+		// for (String key : commands.keySet()) {
+		// System.out.println(key);
+		// }
+
+		// return "OK";
 
 		// AppMedia m = new AppMedia();
 		// m.app_id = 3;

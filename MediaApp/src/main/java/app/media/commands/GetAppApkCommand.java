@@ -58,8 +58,8 @@ import org.springframework.http.ResponseEntity;
 @Component
 public class GetAppApkCommand extends Command {
 
-	@Autowired
-	MediaApplicationController mediaApplicationController;
+	// @Autowired
+	// MediaApplicationController mediaApplicationController;
 
 	@Autowired
 	AppMediaRepository appRepo;

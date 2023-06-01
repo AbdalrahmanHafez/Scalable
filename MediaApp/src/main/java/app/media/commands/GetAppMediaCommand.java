@@ -15,8 +15,8 @@ import app.media.repositories.AppMediaRepository;
 @Component
 public class GetAppMediaCommand extends Command {
 
-	@Autowired
-	MediaApplicationController mediaApplicationController;
+	// @Autowired
+	// MediaApplicationController mediaApplicationController;
 
 	@Autowired
 	AppMediaRepository appRepo;
