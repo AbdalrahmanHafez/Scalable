@@ -13,4 +13,9 @@ public class ProductTopicConfig {
         return TopicBuilder.name("productApp")
                 .build();
     }
+    @Bean
+    public NewTopic productControllerTopic(){
+        return TopicBuilder.name("product-controller")
+                .build();
+    }
 }

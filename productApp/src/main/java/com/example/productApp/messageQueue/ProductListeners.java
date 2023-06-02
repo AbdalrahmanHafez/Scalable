@@ -6,10 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.Map;
+
 
 @Component
 @Slf4j
@@ -17,27 +18,26 @@ public class ProductListeners {
 
 
     private final Invoker invoker;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, Map<String , Object>> kafkaTemplate;
 
-    public ProductListeners(Invoker invoker, KafkaTemplate<String, String> kafkaTemplate) {
+    public ProductListeners(Invoker invoker, KafkaTemplate<String,  Map<String , Object>> kafkaTemplate) {
         this.invoker = invoker;
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @KafkaListener(
-            topics = "productApp",
-            groupId = "product"
-    )
-    void listener(String data) {
-        log.info(data);
-        System.out.println("Listener received " + data);
-    }
+//    @KafkaListener(
+//            topics = "productApp",
+//            groupId = "product"
+//    )
+//    void listener1(HashMap<String , Object> data) {
+//        System.out.println("Listener received " + data.toString());
+//    }
 
     @KafkaListener(
-            topics = "product-controller",
-            groupId = ""
+            topics = "product-controller-commands",
+            groupId = "product-controller-commands-group"
     )
-    void listener(@RequestBody HashMap<String, Object> request) {
+    void listener(HashMap<String, Object> request) {
         String actionName = request.toString();
         try {
             Class CommandClass = Class.forName("com.example.productApp.commands.controller." + actionName + "Command");

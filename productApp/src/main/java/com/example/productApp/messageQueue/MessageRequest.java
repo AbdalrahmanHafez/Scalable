@@ -1,4 +1,6 @@
 package com.example.productApp.messageQueue;
 
-public record MessageRequest(String message) {
+import java.util.Map;
+
+public record MessageRequest(Map<String , Object> message) {
 }
