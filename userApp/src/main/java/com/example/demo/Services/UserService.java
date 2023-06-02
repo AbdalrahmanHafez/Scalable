@@ -54,9 +54,9 @@ public class UserService {
 
     public CompletableFuture<List<User>> getUsersAsync() {
         CompletableFuture<List<User>> users = CompletableFuture.supplyAsync(() -> {
-            System.out.println(" method started. Thread: " + Thread.currentThread().getName());
+           loggingService.logInfo(" method started. Thread: " + Thread.currentThread().getName());
             List<User> tempUsers = userRepository.findAll();
-            System.out.println(" method ended. Thread: " + Thread.currentThread().getName());
+            loggingService.logInfo(" method ended. Thread: " + Thread.currentThread().getName());
             return tempUsers;
         }, threadPoolTaskExecutor);
 
