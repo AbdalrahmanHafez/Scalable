@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import app.media.controllers.MediaApplicationController;
 import app.media.models.AppMedia;
 import app.media.repositories.AppMediaRepository;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class PostAppMediaCommand extends Command {
 
@@ -39,6 +41,8 @@ public class PostAppMediaCommand extends Command {
 		appMedia.insertMedia(media_type, link);
 
 		appRepo.save(appMedia);
+
+		log.info(String.format("[INFO] App media for %s, saved successfully", app_id));
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

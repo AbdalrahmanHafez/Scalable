@@ -32,6 +32,8 @@ import app.media.commands.Command;
 import app.media.controllers.MediaApplicationController;
 import app.media.models.AppMedia;
 import app.media.repositories.AppMediaRepository;
+import lombok.extern.slf4j.Slf4j;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -52,6 +54,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+@Slf4j
 @Component
 public class PostAppApkCommand extends Command {
 
@@ -63,9 +66,6 @@ public class PostAppApkCommand extends Command {
 
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
-
-	@Autowired
-	private GridFsOperations operations;
 
 	@Override
 	public ResponseEntity execute(HashMap<String, Object> map) {
@@ -80,11 +80,14 @@ public class PostAppApkCommand extends Command {
 		try {
 			m.apk_id = gfsUploadFile(apkData);
 		} catch (IOException e) {
-			System.out.println("[ERROR] Error while uploading apk. gfsUploadFile()");
+			// System.out.println("[ERROR] Error while uploading apk. gfsUploadFile()");
+			log.error("[ERROR] Error while uploading apk. gfsUploadFile() " + e.getMessage());
 			return new ResponseEntity<>("Error uploading apk", HttpStatus.BAD_REQUEST);
 		}
 
 		appRepo.save(m);
+
+		log.info(String.format("[INFO] App apk for %s, uploaded successfully", app_id));
 
 		return new ResponseEntity<>(HttpStatus.OK);
 
