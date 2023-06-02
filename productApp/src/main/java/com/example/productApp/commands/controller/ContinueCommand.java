@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class ContinueCommand implements Command {
 
-    public Object execute(HashMap<String , Object> map) throws Exception {
+    public Object execute(HashMap<String , Object> map) {
         PropertiesHandler.addProperty("freeze", "false");
         return new Object();
     }

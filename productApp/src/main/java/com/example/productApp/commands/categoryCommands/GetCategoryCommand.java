@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class GetCategoryCommand extends CategoryCommand {
 
     @Override
-    public Object execute(HashMap<String, Object> map) throws Exception {
+    public Object execute(HashMap<String, Object> map) {
         int id = (int) map.get("category_id");
         return getService().getCategory(id);
     }

@@ -4,18 +4,20 @@ import com.example.productApp.models.Product;
 
 import java.util.HashMap;
 
-public class UpdateAverageRatingCommand extends ProductCommand {
+public class Increase3StarRatingCommand extends ProductCommand{
     @Override
     public Object execute(HashMap<String, Object> map) {
         String productId = (String) map.get("productId");
-        double productAverageRate = (double) map.get("AverageRating");
+       // List<Integer> TheRating = (List<Integer>) map.get("TheRating"); is it really needed??????????????????
+
+
         Product productToUpdate = getProductService().getProductById(productId);
 //        if (productToUpdate == null) {
 //            throw new IllegalArgumentException("Product not found for ID: " + productId);
 //        }
-        if (map.containsKey("AverageRating")) {
-            productToUpdate.setaveragerating((double) map.get("AverageRating"));
+        if (map.containsKey("TheRating")) {
+            productToUpdate.setrating((java.util.List<Integer>) map.get("TheRating"));//????????????????????????
         }
-        return getProductService().updateAverageRating(productId);
+        return getProductService().increase3starrating(productId);
     }
 }

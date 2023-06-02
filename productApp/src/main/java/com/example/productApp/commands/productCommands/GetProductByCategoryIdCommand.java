@@ -7,7 +7,7 @@ public class GetProductByCategoryIdCommand extends ProductCommand {
 
 
     @Override
-    public Object execute(HashMap<String, Object> map) throws Exception {
+    public Object execute(HashMap<String, Object> map)  {
         return getProductService().getProductsByCategoryId((String)map.get("category_id"));
     }
 }
