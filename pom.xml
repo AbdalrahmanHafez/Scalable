@@ -12,7 +12,7 @@
         <module>userapp</module>
         <module>service-registry</module>
         <module>controller</module>
-
+        <module>api-gateway</module>
     </modules>
 
 	<properties>
