@@ -18,10 +18,10 @@ public class CustomInterceptor implements HandlerInterceptor {
 		// Pre-processing logic
 		// For example, you can perform authentication or modify the request
 
-		if (request.getRequestURI().equals("/continue")) {
-			System.out.println("[INFO] Prehandle Continue request");
-			return true;
-		}
+		// if (request.getRequestURI().equals("/continue")) {
+		// System.out.println("[INFO] Prehandle Continue request");
+		// return true;
+		// }
 
 		boolean canContinue = !MediaApplicationController.isPaused;
 		System.out.println("[INFO] Prehandle " + (canContinue ? "continue" : "Blocked") + " " + request.getRequestURI()

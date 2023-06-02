@@ -23,6 +23,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -102,7 +104,7 @@ public class MediaApplicationController {
 
 	}
 
-	//delete App APK
+	// delete App APK
 	@DeleteMapping("/deleteAppAPK/{app_id}")
 	@Async
 	public CompletableFuture<ResponseEntity<String>> DeleteAppApk(@PathVariable String app_id)
@@ -148,54 +150,43 @@ public class MediaApplicationController {
 		}, threadPoolTaskExecutor);
 	}
 
-	// Controller Commands
-	@PostMapping(path = "/set_max_thread_count/{thread_count}")
-	public ResponseEntity<String> adjustThreads(@PathVariable String thread_count) {
-		// TODO: make it a command
+	public void setThreadCount(Integer thread_count) {
 		try {
-			threadPoolTaskExecutor.setMaxPoolSize(Integer.parseInt(thread_count));
-			// System.out.println(String.format("Thread count is set to %d", thread_count));
-			log.info(String.format("Thread count is set to %d", thread_count));
+			if (thread_count < 1) {
+				log.error("[ERROR] thread_count is less than 1");
+				return;
+			}
+
+			threadPoolTaskExecutor.setCorePoolSize(thread_count);
+			threadPoolTaskExecutor.setMaxPoolSize(thread_count);
+			threadPoolTaskExecutor.setQueueCapacity(thread_count);
+
+			log.info(String.format("[INFO] Thread count is set to %d", thread_count));
 		} catch (Exception e) {
-			// System.out.println("[ERROR]" + e.getMessage());
 			log.error("[ERROR]" + e.getMessage());
-			return new ResponseEntity<String>("Error", HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<String>("OK", HttpStatus.OK);
 	}
 
-	@GetMapping("/continue")
-	public ResponseEntity<String> continueServer() {
-		isPaused = false;
-		System.out.println("[INFO] Server is continued");
-		return new ResponseEntity<String>("OK", HttpStatus.OK);
-	}
+	public void setDbConnectionCount(Integer count) {
+		log.info("[INFO] trying to set db connections count to " + count);
 
-	@GetMapping("/pause")
-	public ResponseEntity<String> pauseServer() {
-		isPaused = true;
-		System.out.println("[INFO] Server is paused");
-		return new ResponseEntity<String>("OK", HttpStatus.OK);
-	}
+		// TODO: dynamic db connection string
 
-	@GetMapping("/updateDB/{new_connection_uri}")
-	public String updateDB(@PathVariable String new_connection_uri) {
-		log.info("[INFO] trying to updateDB");
+		// String connectionString = System.getProperty("spring.data.mongodb.uri");
+		// ConnectionString connectionString = new ConnectionString(new_connection_uri);
+		ConnectionString connectionString = new ConnectionString(
+				"mongodb+srv://Yousef:OrY39uo9XYO9FS4k@cluster0.urbm3.mongodb.net/?retryWrites=true&w=majority&maxPoolSize="
+						+ count);
 
-		// ConnectionString connectionString = new ConnectionString(
-		// "mongodb+srv://Yousef:OrY39uo9XYO9FS4k@cluster0.urbm3.mongodb.net/?retryWrites=true&w=majority&maxPoolSize=2");
-
-		ConnectionString connectionString = new ConnectionString(new_connection_uri);
 		MongoClient newClient = MongoClients.create(connectionString);
+
 		mongoClient = newClient;
 		mongoTemplate = new MongoTemplate(newClient, "mediadb");
 
-		log.info("[INFO] updateDB is updated");
-		return "OK";
+		log.info("[INFO] db connections is updated to " + count);
 	}
 
-	@GetMapping("/setLogLevel/{new_log_level}")
-	public String setLogLevel(@PathVariable String new_log_level) {
+	public void setLogLevel(String new_log_level) {
 		log.info("[INFO] setting loglevel to " + new_log_level);
 
 		Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
@@ -206,26 +197,108 @@ public class MediaApplicationController {
 		// log.debug("This is a DEBUG log");
 		// log.info("This is an INFO log");
 		// log.error("This is an ERROR log");
-
-		return "OK";
 	}
 
-	@PostMapping("/test2")
-	public String test2(@RequestBody HashMap<String, Object> body) {
-		System.out.println("[TEST2]");
-		for (String key : body.keySet()) {
-			System.out.println(String.format("key: %s, value: %s", key, body.get(key)));
+	@Autowired
+	KafkaTemplate<String, Map<String, Object>> kafkaTemplate;
+
+	@KafkaListener(topics = "controller_commands", groupId = "controller_commands_group")
+	public void controller_handler(Map<String, Object> data) {
+		// TODO: make each into command pattern
+		System.out.println("[Controller Handler] Received data: " + data.toString());
+
+		String request_action_name = (String) data.get("Action");
+		if (request_action_name == null) {
+			log.error("[ERROR] request_action_name is null");
+			return;
 		}
 
+		switch (request_action_name) {
+			case "set_error_reporting_level":
+				String newLogLevel = (String) data.get("reportinglevel");
+				if (newLogLevel == null) {
+					log.error("[ERROR] reportinglevel is null");
+					return;
+				}
+				setLogLevel(newLogLevel);
+				break;
+
+			case "freeze":
+				isPaused = true;
+				log.info("[INFO] Server is paused");
+				break;
+
+			case "continue":
+				isPaused = false;
+				log.info("[INFO] Server is continued");
+				break;
+
+			case "set_max_thread_count":
+				Integer new_thread_count = 0;
+				try {
+					new_thread_count = Integer.parseInt(data.get("threads").toString());
+				} catch (Exception e) {
+					log.error("[ERROR] threads value is incorrect");
+				}
+
+				setThreadCount(new_thread_count);
+				break;
+
+			case "set_max_db_connections_count":
+				Integer new_db_connections_count = 0;
+				try {
+					new_db_connections_count = Integer.parseInt(data.get("dbconnections").toString());
+				} catch (Exception e) {
+					log.error("[ERROR] dbconnections value is incorrect");
+				}
+				setDbConnectionCount(new_db_connections_count);
+				break;
+
+			default:
+				log.error("[ERROR] request_action_name is not valid");
+				return;
+		}
+
+		log.info("[Controller Handler] Done");
+	}
+
+	@GetMapping("/test2")
+	public String test2() {
+		Map<String, Object> body = new HashMap<>();
+
+		// {
+		// "Action": "Add",
+		// "AppName": "ServiceX",
+		// "threads": 1,
+		// "dbconnections": 100,
+		// "reportinglevel": "DEBUG"
+		// }
+
+		// body.put("Action", "set_error_reporting_level");
+		// body.put("AppName", "ServiceX");
+		// body.put("threads", 1);
+		// body.put("dbconnections", 100);
+		// body.put("reportinglevel", "TRACE");
+
+		// body.put("Action", "continue");
+		// body.put("Action", "freeze");
+
+		// body.put("Action", "set_max_thread_count");
+		// body.put("threads", 10);
+
+		body.put("Action", "set_max_db_connections_count");
+		body.put("dbconnections", 50);
+
+		// TODO: set correct Topic for our service
+		kafkaTemplate.send("controller_commands", body);
+
+		System.out.println("[INFO] Sent successfully");
 		return "OK";
 	}
 
-	static int value = 0;
-
-	@GetMapping("/test")
 	// @Async
+	@GetMapping("/test")
 	public String test() {
-		System.out.println("[TEST] Test endpoint called");
 
 		// System.setProperty("logging.level.root", "DEBUG");
 
@@ -319,7 +392,6 @@ public class MediaApplicationController {
 		// }, threadPoolTaskExecutor);
 
 		// return res;
-
 
 		// System.out.println(commands.size());
 
