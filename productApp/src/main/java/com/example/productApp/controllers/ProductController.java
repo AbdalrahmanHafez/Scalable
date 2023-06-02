@@ -41,7 +41,11 @@ public class ProductController {
             @PathVariable("category_id") String category_id) {
         return productService.getProductsByCategoryId(category_id);
     }
-
+    @GetMapping(path = "getApps/search")
+    public List<Product> getProductsByName(
+            @RequestParam("name") String name) {
+        return productService.getProductsByNameRegex(name);
+    }
     @PostMapping("/saveProducts")
     public void addProduct(@RequestBody Product product) {
         productService.addNewProduct(product);
@@ -117,4 +121,15 @@ public class ProductController {
         productService.updateAverageRating(productId);
 
     }
+
+
+    @PutMapping(path = "/increaseDownloadCount/{productId}")
+    public void increasedownloadCounter(
+            @PathVariable("productId") String productId
+    ) {
+        productService.increasedownloadcount(productId);
+
+    }
+
+
 }

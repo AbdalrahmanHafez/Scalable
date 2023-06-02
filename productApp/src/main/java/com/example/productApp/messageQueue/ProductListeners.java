@@ -57,11 +57,8 @@ public class ProductListeners {
             topics = "user-product",
             groupId = "UserConsumerGroup"
     )
-    void userListener(HashMap<String,Object> data) {
-        if (data.get("request") == null) {
-            //userId = (String) data.get("getuserbytoken");
-            invoker.ExecuteCommand(data);
+    void userListener(HashMap<String,Object> request){
+            String userId = (String) request.get("getuserbytoken");
             log.info("Received userId");
-        }
     }
 }
