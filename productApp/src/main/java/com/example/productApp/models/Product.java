@@ -126,4 +126,8 @@ public class Product {
         return TheRating;
     }
 
+    public void setrating( List<Integer> TheRating) {
+        this.TheRating= TheRating;
+    }
+
 }

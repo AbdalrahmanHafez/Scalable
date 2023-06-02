@@ -182,206 +182,243 @@ public class ProductService {
 
     }
 
-    public CompletableFuture<String> updateAverageRating(String productId) {
-        CompletableFuture<String> messageCF = CompletableFuture.supplyAsync(() -> {        String message;
-            Optional<Product> productOptional = productRepository.findById(productId);
-            if (productOptional.isEmpty()) {
-                message = "App with id" + " " + productId + " " + "does not exists";
-                logsSender.sendErrorMessage(message);
-            } else {
-                List<Integer> TheRating = productOptional.get().getRating();
+    public String updateAverageRating(String productId) {
+        String message;
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            message = "App with id" + " " + productId + " " + "does not exists";
+            logsSender.sendErrorMessage(message);
+        } else {
+            List<Integer> TheRating = productOptional.get().getRating();
 
-                if (TheRating != null) {
-                    int zeroStaramount = TheRating.get(0);
-                    int oneStaramount = TheRating.get(1);
-                    int twoStaramount = TheRating.get(2);
-                    int threeStaramount = TheRating.get(3);
-                    int fourStaramount = TheRating.get(4);
+            if (TheRating != null) {
+                int zeroStaramount = TheRating.get(0);
+                int oneStaramount = TheRating.get(1);
+                int twoStaramount = TheRating.get(2);
+                int threeStaramount = TheRating.get(3);
+                int fourStaramount = TheRating.get(4);
 
-                    int totalamount = zeroStaramount + oneStaramount + twoStaramount + threeStaramount + fourStaramount;
+                int totalamount = zeroStaramount + oneStaramount + twoStaramount + threeStaramount + fourStaramount;
 
-                    double newaveragerating = ((double) ((zeroStaramount * 0) + (oneStaramount) + (twoStaramount * 2) + (threeStaramount * 3) + (fourStaramount * 4)) / totalamount);
+                double newaveragerating = ((double) ((zeroStaramount * 0) + (oneStaramount) + (twoStaramount * 2) + (threeStaramount * 3) + (fourStaramount * 4)) / totalamount);
 
-                    productOptional.get().setaveragerating(newaveragerating);
-                    productRepository.save(productOptional.get());
-                }
-                message = "App with id" + " " + productId + " " + "has updated average rating successfully";
-                logsSender.sendLogMessage(message);
+                productOptional.get().setaveragerating(newaveragerating);
+                productRepository.save(productOptional.get());
             }
-            return message;
-        }, threadPoolTaskExecutor);
-        return messageCF;
+
+            message = "App with id" + " " + productId + " " + "has updated average rating successfully";
+            logsSender.sendLogMessage(message);
+        }
+        return message;
+    }
+
+    public String increase0starrating(String productId){
+        String message;
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            message = "App with id" + " " + productId + " " + "does not exists";
+            logsSender.sendErrorMessage(message);
+        }
+        else{
+            List<Integer> TheRating= productOptional.get().getRating();
+
+            if(TheRating!=null){
+                int zeroStar;
+                zeroStar = TheRating.get(0);
+                zeroStar=zeroStar+1;
+        
+                TheRating.set(0, zeroStar);
+                TheRating= productOptional.get().getRating();
+                int zeroStaramount = TheRating.get(0);
+                int oneStaramount = TheRating.get(1);
+                int twoStaramount = TheRating.get(2);
+                int threeStaramount = TheRating.get(3);
+                int fourStaramount = TheRating.get(4);
+        
+                int totalamount=zeroStaramount+oneStaramount+twoStaramount+threeStaramount+fourStaramount;
+        
+                double newaveragerating=((double)((zeroStaramount*0)+(oneStaramount)+(twoStaramount*2)+(threeStaramount*3)+(fourStaramount*4))/totalamount);
+        
+                productOptional.get().setaveragerating(newaveragerating);
+        
+        
+                productRepository.save(productOptional.get());
+            }
+
+            message = "App with id" + " " + productId + " " + "has increases 0star successfully";
+            logsSender.sendLogMessage(message);
+        }
+        return message;
+        
+      
 
     }
 
-    public void increase0starrating(String productId) {
-        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> {
+    public String increase1starrating(String productId){
+        String message;
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            message = "App with id" + " " + productId + " " + "does not exists";
+            logsSender.sendErrorMessage(message);
+        }
+        else{
+            List<Integer> TheRating= productOptional.get().getRating();
 
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new IllegalStateException(
-                            "product with id" + " " + productId + " " + "does not exists"
-                    ));
-            List<Integer> TheRating = product.getRating();
-            int zeroStar;
-            zeroStar = TheRating.get(0);
-            zeroStar = zeroStar + 1;
-
-            TheRating.set(0, zeroStar);
-            TheRating = product.getRating();
-            int zeroStaramount = TheRating.get(0);
-            int oneStaramount = TheRating.get(1);
-            int twoStaramount = TheRating.get(2);
-            int threeStaramount = TheRating.get(3);
-            int fourStaramount = TheRating.get(4);
-
-            int totalamount = zeroStaramount + oneStaramount + twoStaramount + threeStaramount + fourStaramount;
-
-            double newaveragerating = ((double) ((zeroStaramount * 0) + (oneStaramount) + (twoStaramount * 2) + (threeStaramount * 3) + (fourStaramount * 4)) / totalamount);
-
-            product.setaveragerating(newaveragerating);
-            productRepository.save(product);
-            return null;
-        }, threadPoolTaskExecutor);
-
-    }
-
-    public void increase1starrating(String productId) {
-        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> {
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new IllegalStateException(
-                            "product with id" + " " + productId + " " + "does not exists"
-                    ));
-            List<Integer> TheRating = product.getRating();
-            int oneStar;
-            oneStar = TheRating.get(1);
-            oneStar = oneStar + 1;
-            // String starvalue=oneStar.substring(0, 6);
-            //     String amount=oneStar.substring(7);
-            //     int amountinint=Integer.parseInt(amount);
-            //             amountinint=amountinint+1;
-            // String finalvalue="";
-            // finalvalue=finalvalue+starvalue+""+amountinint;
-
-            TheRating.set(1, oneStar);
-
-
-            TheRating = product.getRating();
-            int zeroStaramount = TheRating.get(0);
-            int oneStaramount = TheRating.get(1);
-            int twoStaramount = TheRating.get(2);
-            int threeStaramount = TheRating.get(3);
-            int fourStaramount = TheRating.get(4);
-
-            int totalamount = zeroStaramount + oneStaramount + twoStaramount + threeStaramount + fourStaramount;
-
-            double newaveragerating = ((double) ((zeroStaramount * 0) + (oneStaramount) + (twoStaramount * 2) + (threeStaramount * 3) + (fourStaramount * 4)) / totalamount);
-
-            product.setaveragerating(newaveragerating);
-
-            productRepository.save(product);
-            return null;
-        }, threadPoolTaskExecutor);
-    }
-
-
-    public void increase2starrating(String productId) {
-        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> {
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new IllegalStateException(
-                            "product with id" + " " + productId + " " + "does not exists"
-                    ));
-            List<Integer> TheRating = product.getRating();
-            int twoStar;
-            twoStar = TheRating.get(2);
-            twoStar = twoStar + 1;
-
-            TheRating.set(2, twoStar);
-
-
-            TheRating = product.getRating();
-            int zeroStaramount = TheRating.get(0);
-            int oneStaramount = TheRating.get(1);
-            int twoStaramount = TheRating.get(2);
-            int threeStaramount = TheRating.get(3);
-            int fourStaramount = TheRating.get(4);
-
-            int totalamount = zeroStaramount + oneStaramount + twoStaramount + threeStaramount + fourStaramount;
-
-            double newaveragerating = ((double) ((zeroStaramount * 0) + (oneStaramount) + (twoStaramount * 2) + (threeStaramount * 3) + (fourStaramount * 4)) / totalamount);
-
-            product.setaveragerating(newaveragerating);
-
-            productRepository.save(product);
-            return null;
-        }, threadPoolTaskExecutor);
+            if(TheRating!=null){
+                int oneStar;
+                oneStar = TheRating.get(1);
+                oneStar=oneStar+1;
+               
+        
+                TheRating.set(1, oneStar);
+        
+        
+                TheRating= productOptional.get().getRating();
+                int zeroStaramount = TheRating.get(0);
+                int oneStaramount = TheRating.get(1);
+                int twoStaramount = TheRating.get(2);
+                int threeStaramount = TheRating.get(3);
+                int fourStaramount = TheRating.get(4);
+        
+                int totalamount=zeroStaramount+oneStaramount+twoStaramount+threeStaramount+fourStaramount;
+        
+                double newaveragerating=((double)((zeroStaramount*0)+(oneStaramount)+(twoStaramount*2)+(threeStaramount*3)+(fourStaramount*4))/totalamount);
+        
+                productOptional.get().setaveragerating(newaveragerating);
+        
+                productRepository.save(productOptional.get());
+            }
+            message = "App with id" + " " + productId + " " + "has increases 1star successfully";
+            logsSender.sendLogMessage(message);
+        }
+       
+        return message;
 
     }
 
-    public void increase3starrating(String productId) {
-        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> {
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new IllegalStateException(
-                            "product with id" + " " + productId + " " + "does not exists"
-                    ));
-            List<Integer> TheRating = product.getRating();
-            int threeStar;
-            threeStar = TheRating.get(3);
-            threeStar = threeStar + 1;
 
-            TheRating.set(3, threeStar);
+    public String increase2starrating(String productId){
+        String message;
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            message = "App with id" + " " + productId + " " + "does not exists";
+            logsSender.sendErrorMessage(message);
+        }
+        else{
+            List<Integer> TheRating= productOptional.get().getRating();
 
+            if(TheRating!=null){
 
-            TheRating = product.getRating();
-            int zeroStaramount = TheRating.get(0);
-            int oneStaramount = TheRating.get(1);
-            int twoStaramount = TheRating.get(2);
-            int threeStaramount = TheRating.get(3);
-            int fourStaramount = TheRating.get(4);
+                int twoStar;
+                twoStar = TheRating.get(2);
+                twoStar=twoStar+1;
+        
+                TheRating.set(2, twoStar);
+        
+        
+                TheRating = productOptional.get().getRating();
+                int zeroStaramount = TheRating.get(0);
+                int oneStaramount = TheRating.get(1);
+                int twoStaramount = TheRating.get(2);
+                int threeStaramount = TheRating.get(3);
+                int fourStaramount = TheRating.get(4);
+        
+                int totalamount=zeroStaramount+oneStaramount+twoStaramount+threeStaramount+fourStaramount;
+        
+                double newaveragerating=((double)((zeroStaramount*0)+(oneStaramount)+(twoStaramount*2)+(threeStaramount*3)+(fourStaramount*4))/totalamount);
+        
+                productOptional.get().setaveragerating(newaveragerating);
+        
+                productRepository.save(productOptional.get());
 
-            int totalamount = zeroStaramount + oneStaramount + twoStaramount + threeStaramount + fourStaramount;
+            }
+            message = "App with id" + " " + productId + " " + "has increases 2star successfully";
+            logsSender.sendLogMessage(message);
 
-            double newaveragerating = ((double) ((zeroStaramount * 0) + (oneStaramount) + (twoStaramount * 2) + (threeStaramount * 3) + (fourStaramount * 4)) / totalamount);
-
-            product.setaveragerating(newaveragerating);
-
-            productRepository.save(product);
-
-            return null;
-        }, threadPoolTaskExecutor);
+        }
+       
+        return message;
 
     }
 
-    public void increase4starrating(String productId) {
-        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(() -> {
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new IllegalStateException(
-                            "product with id" + " " + productId + " " + "does not exists"
-                    ));
-            List<Integer> TheRating = product.getRating();
-            int fourStar;
-            fourStar = TheRating.get(4);
-            fourStar = fourStar + 1;
+    public String increase3starrating(String productId) {
+        String message;
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            message = "App with id" + " " + productId + " " + "does not exists";
+            logsSender.sendErrorMessage(message);
+        }
+        else{
+            List<Integer> TheRating = productOptional.get().getRating();
+            if(TheRating!=null){
+                int threeStar;
+                threeStar = TheRating.get(3);
+                threeStar = threeStar + 1;
+        
+                TheRating.set(3, threeStar);
+        
+        
+                TheRating = productOptional.get().getRating();
+                int zeroStaramount = TheRating.get(0);
+                int oneStaramount = TheRating.get(1);
+                int twoStaramount = TheRating.get(2);
+                int threeStaramount = TheRating.get(3);
+                int fourStaramount = TheRating.get(4);
+        
+                int totalamount = zeroStaramount + oneStaramount + twoStaramount + threeStaramount + fourStaramount;
+        
+                double newaveragerating = ((double) ((zeroStaramount * 0) + (oneStaramount) + (twoStaramount * 2) + (threeStaramount * 3) + (fourStaramount * 4)) / totalamount);
+        
+                productOptional.get().setaveragerating(newaveragerating);
+        
+                productRepository.save(productOptional.get());
 
-            TheRating.set(4, fourStar);
+            }
+            message = "App with id" + " " + productId + " " + "has increases 3star successfully";
+            logsSender.sendLogMessage(message);
+        }
+       
+        return message;
 
+    }
 
-            TheRating = product.getRating();
-            int zeroStaramount = TheRating.get(0);
-            int oneStaramount = TheRating.get(1);
-            int twoStaramount = TheRating.get(2);
-            int threeStaramount = TheRating.get(3);
-            int fourStaramount = TheRating.get(4);
-
-            int totalamount = zeroStaramount + oneStaramount + twoStaramount + threeStaramount + fourStaramount;
-
-            double newaveragerating = ((double) ((zeroStaramount * 0) + (oneStaramount) + (twoStaramount * 2) + (threeStaramount * 3) + (fourStaramount * 4)) / totalamount);
-
-            product.setaveragerating(newaveragerating);
-
-            productRepository.save(product);
-
-            return null;
-        }, threadPoolTaskExecutor);
+    public String increase4starrating(String productId) {
+        String message;
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            message = "App with id" + " " + productId + " " + "does not exists";
+            logsSender.sendErrorMessage(message);
+        }
+        else{
+            List<Integer> TheRating = productOptional.get().getRating();
+            if(TheRating!=null){
+                int fourStar;
+                fourStar = TheRating.get(4);
+                fourStar = fourStar + 1;
+        
+                TheRating.set(4, fourStar);
+        
+        
+                TheRating = productOptional.get().getRating();
+                int zeroStaramount = TheRating.get(0);
+                int oneStaramount = TheRating.get(1);
+                int twoStaramount = TheRating.get(2);
+                int threeStaramount = TheRating.get(3);
+                int fourStaramount = TheRating.get(4);
+        
+                int totalamount = zeroStaramount + oneStaramount + twoStaramount + threeStaramount + fourStaramount;
+        
+                double newaveragerating = ((double) ((zeroStaramount * 0) + (oneStaramount) + (twoStaramount * 2) + (threeStaramount * 3) + (fourStaramount * 4)) / totalamount);
+        
+                productOptional.get().setaveragerating(newaveragerating);
+        
+                productRepository.save(productOptional.get());
+            }
+            message = "App with id" + " " + productId + " " + "has increases 4star successfully";
+            logsSender.sendLogMessage(message);
+        }
+       
+        return message;
 
     }
 
