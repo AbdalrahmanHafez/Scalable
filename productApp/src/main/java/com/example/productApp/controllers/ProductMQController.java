@@ -52,11 +52,12 @@ public class ProductMQController {
         kafkaTemplate.send("user-product" , request);
         log.info("request sent to user");
     }
-    public void logInhUserId(){
+    @PostMapping("/userProductMQ")
+    public void logInhUserId(@RequestBody MessageRequest user){
         Map<String , Object> request = new HashMap<>();
-        Map<String,String> userData = new HashMap<String, String>() ;
-        userData.put("email","newuser3@email.com");
-        userData.put("password","user3@pass");
+        Map<String,String> userData = new HashMap<String, String>();
+        userData.put("email",user.email());
+        userData.put("password",user.password());
         request.put("login" , userData);
         request.put("request", "request");
         kafkaTemplate.send("user-product" , request);

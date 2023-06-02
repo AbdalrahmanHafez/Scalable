@@ -8,8 +8,8 @@ public class SetMaxThreadCountCommand implements Command {
 
     @Override
     public Object execute(HashMap<String , Object> map)  {
-        PropertiesHandler.addProperty("freeze", "true");
-        return new Object();
+//        PropertiesHandler.addProperty("freeze", "true");
+          return new Object();
     }
 
 }

@@ -59,7 +59,8 @@ public class ProductListeners {
     )
     void userListener(HashMap<String,Object> data) {
         if (data.get("request") == null) {
-            userId = (String) data.get("getuserbytoken");
+            //userId = (String) data.get("getuserbytoken");
+            invoker.ExecuteCommand(data);
             log.info("Received userId");
         }
     }
