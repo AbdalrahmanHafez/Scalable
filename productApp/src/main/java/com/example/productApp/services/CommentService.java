@@ -7,13 +7,14 @@ import com.example.productApp.repositories.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -23,104 +24,121 @@ public class CommentService {
     private final  ProductService productService;
     private final Logger logger;
 
+    @Autowired
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
 
     @Autowired
-    public CommentService(CommentRepository commentRepository, ProductService productService) {
+    public CommentService(CommentRepository commentRepository, ProductService productService, ThreadPoolTaskExecutor threadPoolTaskExecutor) {
         this.commentRepository = commentRepository;
         this.productService = productService;
+        this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.logger = LoggerFactory.getLogger(CommentService.class);
 
     }
 
-    public List<Comment> getCommentsByUser(String userId) throws Exception {
-        if (userId == null) {
-            String errorMessage = "UserId cannot be null";
+    public CompletableFuture<List<Comment>> getCommentsByUser(String userId) throws Exception {
+
+            CompletableFuture<List<Comment>> commentsList = CompletableFuture.supplyAsync(() -> {
+                if (userId == null) {
+                    String errorMessage = "UserId cannot be null";
 //            logger.error(errorMessage);
-            logsSender.sendErrorMessage(errorMessage);
-            throw new Exception(errorMessage);
-        }
+                    logsSender.sendErrorMessage(errorMessage);
+                }
 
-        List<Comment> comments = commentRepository.findByUserId(userId);
+                List<Comment> comments = commentRepository.findByUserId(userId);
 
-        String logMessage;
-        if (comments.isEmpty()) {
-            logMessage = "No comments found for UserId: " + userId;
+                String logMessage;
+                if (comments.isEmpty()) {
+                    logMessage = "No comments found for UserId: " + userId;
 //            logger.info(logMessage);
-        } else {
-            logMessage = "Retrieved " + comments.size() + " comments for UserId: " + userId;
+                } else {
+                    logMessage = "Retrieved " + comments.size() + " comments for UserId: " + userId;
 //            logger.info(logMessage);
-        }
-        logsSender.sendLogMessage(logMessage);
+                }
+                logsSender.sendLogMessage(logMessage);
 
-        return comments;
+                return comments;
+            }, threadPoolTaskExecutor);
+
+            return commentsList;
     }
 
 
-    public List<Comment> getAppComments(String appId) throws Exception {
-        Product app = productService.getProductById(appId);
-        if (app == null) {
-            String errorMessage = "App not found with ID: " + appId;
+    public CompletableFuture<List<Comment>> getAppComments(String appId) throws Exception {
+        CompletableFuture<List<Comment>> commentsList = CompletableFuture.supplyAsync(() -> {
+            Product app = productService.getProductById(appId);
+            if (app == null) {
+                String errorMessage = "App not found with ID: " + appId;
 //            logger.error(errorMessage);
-            logsSender.sendErrorMessage(errorMessage);
-            throw new Exception(errorMessage);
-        }
+                logsSender.sendErrorMessage(errorMessage);
+            }
 
-        List<Comment> comments = commentRepository.findByAppId(appId);
+            List<Comment> comments = commentRepository.findByAppId(appId);
 
-        String logMessage;
-        if (comments.isEmpty()) {
-            logMessage = "No comments found for AppId: " + appId;
-        } else {
-            logMessage = "Retrieved " + comments.size() + " comments for AppId: " + appId;
-        }
+            String logMessage;
+            if (comments.isEmpty()) {
+                logMessage = "No comments found for AppId: " + appId;
+            } else {
+                logMessage = "Retrieved " + comments.size() + " comments for AppId: " + appId;
+            }
 //        logger.info(logMessage);
-        logsSender.sendLogMessage(logMessage);
+            logsSender.sendLogMessage(logMessage);
 
-        return comments;
+            return comments;
+            }, threadPoolTaskExecutor);
+
+        return commentsList;
+
     }
 
 
-    public Comment createComment(Comment comment) throws Exception {
-        if (comment.getUserId() == null) {
-            String errorMessage = "UserId required for creating comment";
+    public CompletableFuture<Comment> createComment(Comment comment) throws Exception {
+        CompletableFuture<Comment> commentCF = CompletableFuture.supplyAsync(() -> {
+            if (comment.getUserId() == null) {
+                String errorMessage = "UserId required for creating comment";
 //            logger.error(errorMessage);
-            logsSender.sendErrorMessage(errorMessage);
-            throw new Exception(errorMessage);
-        }
-        if (comment.getComment() == null) {
-            String errorMessage = "Content required for creating comment";
+                logsSender.sendErrorMessage(errorMessage);
+            }
+            if (comment.getComment() == null) {
+                String errorMessage = "Content required for creating comment";
 //            logger.error(errorMessage);
-            logsSender.sendErrorMessage(errorMessage);
-            throw new Exception(errorMessage);
-        }
-        comment.setId(UUID.randomUUID().toString());
-        String logMessage = "Comment created successfully. CommentId: " + comment.getId();
+                logsSender.sendErrorMessage(errorMessage);
+            }
+            comment.setId(UUID.randomUUID().toString());
+            String logMessage = "Comment created successfully. CommentId: " + comment.getId();
 //        logger.info(logMessage);
-        logsSender.sendLogMessage(logMessage);
+            logsSender.sendLogMessage(logMessage);
 
+            return commentRepository.save(comment);
+            }, threadPoolTaskExecutor);
 
-        return commentRepository.save(comment);
+        return commentCF;
+
     }
 
 
-    public String deleteComment(String commentId) throws Exception {
-        Comment comment = commentRepository.findById(commentId).orElse(null);
-        if (comment == null) {
+    public CompletableFuture<String> deleteComment(String commentId) throws Exception {
+        CompletableFuture<String> commentCF = CompletableFuture.supplyAsync(() -> {
+            Comment comment = commentRepository.findById(commentId).orElse(null);
+            if (comment == null) {
+                //logs
+                String errorMessage = "Comment not found with ID: " + commentId;
+                logger.error(errorMessage);
+                logsSender.sendErrorMessage(errorMessage);
+            }
+
+            commentRepository.deleteById(commentId);
+
             //logs
-            String errorMessage = "Comment not found with ID: " + commentId;
-            logger.error(errorMessage);
-            logsSender.sendErrorMessage(errorMessage);
-            throw new Exception(errorMessage);
-        }
+            String logMessage = "Comment deleted with ID: " + commentId;
+            logger.info(logMessage);
+            logsSender.sendLogMessage(logMessage);
 
-        commentRepository.deleteById(commentId);
+            return "Comment deleted successfully";
+        }, threadPoolTaskExecutor);
 
-        //logs
-        String logMessage = "Comment deleted with ID: " + commentId;
-        logger.info(logMessage);
-        logsSender.sendLogMessage(logMessage);
-
-        return "Comment deleted successfully";
+        return commentCF;
 
     }
 

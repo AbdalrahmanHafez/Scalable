@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping(path = "/Apps")
@@ -22,7 +23,7 @@ public class ProductController {
     }
 
     @GetMapping("/getAllApps")
-    public List<Product> getProducts() {
+    public CompletableFuture<List<Product>> getProducts() {
         return productService.getProducts();
     }
 
@@ -33,13 +34,13 @@ public class ProductController {
     }
 
     @GetMapping(path = "/getApps/Name/{productName}")
-    public Product getProductByName(
+    public CompletableFuture<Product> getProductByName(
             @PathVariable("productName") String productName) {
         return productService.getProductByName(productName);
     }
 
     @GetMapping(path = "/getApps/Category/{category_id}")
-    public List<Product> getProductByCategoryId(
+    public CompletableFuture<List<Product>> getProductByCategoryId(
             @PathVariable("category_id") String category_id) {
         return productService.getProductsByCategoryId(category_id);
     }

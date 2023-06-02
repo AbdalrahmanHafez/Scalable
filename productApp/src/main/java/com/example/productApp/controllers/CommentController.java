@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/comments")
@@ -18,17 +19,17 @@ public class CommentController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<Comment> getCommentsByUser(@PathVariable String userId) throws Exception {
+    public CompletableFuture<List<Comment>> getCommentsByUser(@PathVariable String userId) throws Exception {
         return commentService.getCommentsByUser(userId);
     }
 
     @GetMapping("/app/{appId}")
-    public List<Comment> getCommentsByApp(@PathVariable String appId) throws Exception {
+    public CompletableFuture<List<Comment>> getCommentsByApp(@PathVariable String appId) throws Exception {
         return commentService.getAppComments(appId);
     }
 
     @PostMapping
-    public Comment createComment(@RequestBody Comment comment) throws Exception {
+    public CompletableFuture<Comment> createComment(@RequestBody Comment comment) throws Exception {
         return commentService.createComment(comment);
     }
 
