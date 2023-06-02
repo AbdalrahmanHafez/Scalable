@@ -54,15 +54,24 @@ public class UserService {
 
     public CompletableFuture<List<User>> getUsersAsync() {
         CompletableFuture<List<User>> users = CompletableFuture.supplyAsync(() -> {
-            System.out.println(" method started. Thread: " + Thread.currentThread().getName());
+            loggingService.logInfo(" method started. Thread: " + Thread.currentThread().getName());
             List<User> tempUsers = userRepository.findAll();
-            System.out.println(" method ended. Thread: " + Thread.currentThread().getName());
+            loggingService.logInfo(" method ended. Thread: " + Thread.currentThread().getName());
             return tempUsers;
         }, threadPoolTaskExecutor);
 
        return users;
     }
 
+    public CompletableFuture<Long> getUserByToken(String token) {
+        return CompletableFuture.supplyAsync(() -> {
+            loggingService.logInfo(" method started. Thread: " + Thread.currentThread().getName());
+            Long userID = jwtTokenProvider.getIDFromToken(token);
+            loggingService.logInfo(" method ended. Thread: " + Thread.currentThread().getName());
+            return userID;
+        }, threadPoolTaskExecutor);
+
+    }
 
 
     public ResponseEntity<String> addNewUser(User user){
@@ -151,7 +160,7 @@ public class UserService {
     public CompletableFuture<String> login(String email, String password) {
 
         CompletableFuture<String> result = CompletableFuture.supplyAsync(() -> {
-            System.out.println("Login method started. Thread: " + Thread.currentThread().getName());
+            loggingService.logInfo("Login method started. Thread: " + Thread.currentThread().getName());
 
             CompletableFuture<User> loggedFuture = userRepository.findUserByEmail(email);
 
@@ -171,7 +180,7 @@ public class UserService {
                 }
                 if (verified) {
                     // Generate JWT token
-                    System.out.println("Login method ended. Thread: " + Thread.currentThread().getName());
+                    loggingService.logInfo("Login method ended. Thread: " + Thread.currentThread().getName());
                     loggingService.logInfo("generated Token for ", logged.getId());
                     return jwtTokenProvider.generateToken(logged.getId());
                 }
@@ -186,7 +195,7 @@ public class UserService {
     public ResponseEntity<String> setThreadPoolSize(int threadCount){
         try{
             threadPoolTaskExecutor.setCorePoolSize(threadCount);
-            System.out.println("New thread pool size: " + threadPoolTaskExecutor.getCorePoolSize()); // Change to log
+            loggingService.logInfo("New thread pool size: " + threadPoolTaskExecutor.getCorePoolSize()); // Change to log
             return ResponseEntity.ok("Thread pool size changed to: " + threadCount);
         }
         catch(Exception e){
@@ -222,4 +231,6 @@ public class UserService {
     public boolean isServerFrozen(){
         return Boolean.parseBoolean(getProperty("app.freeze.enabled"));
     }
+
+
 }
