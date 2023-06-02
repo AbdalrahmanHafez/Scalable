@@ -1,0 +1,15 @@
+spring:
+  data:
+    mongodb:
+      uri: "mongodb+srv://Yousef:OrY39uo9XYO9FS4k@cluster0.urbm3.mongodb.net/?retryWrites=true&w=majority"
+      database: "applicationDB"
+  kafka:
+    bootstrap-servers: "localhost:9092"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true

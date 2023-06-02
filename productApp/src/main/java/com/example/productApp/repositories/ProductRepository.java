@@ -12,4 +12,6 @@ public interface ProductRepository
     @Query("{productName:'?0'}")
     Product findProductByName(String productName);
 
+    Product findByProductId(String id);
+
 }

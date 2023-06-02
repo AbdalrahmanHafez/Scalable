@@ -1,0 +1,61 @@
+package com.example.productApp.commands.controller;
+
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
+
+public class PropertiesHandler {
+    static Properties properties = new Properties();
+    static OutputStream output;
+    static InputStream input;
+//    static Resource resource = new ClassPathResource("application.properties");
+
+
+    public static void loadPropertiesHandler(){
+        try {
+
+            output = new FileOutputStream("application.properties");
+            input = new FileInputStream("application.properties");
+
+            // set the properties value
+            properties.setProperty("max_db_threads", "20");
+            properties.setProperty("max_app_threads", "20");
+            properties.setProperty("freeze", "false");
+            properties.setProperty("logging.level.root", "info");
+
+            System.out.println("success");
+
+            properties.store(output, null);
+        } catch (Exception e) {
+            System.out.println("error in loadPropertiesHandler");
+        }
+    }
+
+    public static void addProperty(String key, String val) {
+        try {
+            input = new FileInputStream("application.properties");
+            output = new FileOutputStream("application.properties");
+            properties.load(input);
+            properties.setProperty(key, val);
+            properties.store(output, null);
+        } catch(Exception e) {
+            System.out.println("error in addProperty");
+        }
+    }
+
+    public static String getProperty(String key) {
+        try{
+            input = new FileInputStream("application.properties");
+            properties.load(input);
+            return properties.getProperty(key);
+        } catch(Exception e) {
+            return "error";
+        }
+    }
+}
