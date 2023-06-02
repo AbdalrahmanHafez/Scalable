@@ -35,24 +35,28 @@ public class CommandDispatcher {
     public void executeMessage(HashMap<String,Object> message) {
         Set<String> messagekeys = message.keySet();
         HashMap<String, Object> response = new HashMap<>();
-        response.put("response","response");
         CommandInvoker commandInvoker = new CommandInvoker(null);
         for (String key: messagekeys)
         {
             for (Command c: commands)
             {
-                System.out.println(c.getName());
-                if(key.equals(c.getName())) {
-                    commandInvoker.setCommand(c);
+                if(!c.getService().isServerFrozen() || (c.getService().isServerFrozen() && c.getName().equals("continue"))) {
+                    if (key.equals(c.getName())) {
+                        commandInvoker.setCommand(c);
                         Object o = commandInvoker.execute(message.get(key));
                         response.put(c.getName(), o);
                         break;
-
+                    }
                 }
             }
         }
 
-        controllerProducer.sendMessage(response);
+        if(!(commands.get(0).getService().isServerFrozen() && response.isEmpty()))
+        {
+            response.put("response","response");
+            controllerProducer.sendMessage(response);
+        }
+
     }
 
 }
