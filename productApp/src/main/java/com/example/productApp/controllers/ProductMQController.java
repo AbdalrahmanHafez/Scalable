@@ -70,23 +70,13 @@ public class ProductMQController {
         log.info("[INFO] db connections is updated to " + count);
     }
 
-    public void setThreadCount(Integer thread_count) {
-        try {
-            if (thread_count < 1) {
-                log.error("[ERROR] thread_count is less than 1");
-                return;
-            }
-
-            threadPoolTaskExecutor.setCorePoolSize(thread_count);
-            threadPoolTaskExecutor.setMaxPoolSize(thread_count);
-            threadPoolTaskExecutor.setQueueCapacity(thread_count);
-
-            log.info(String.format("[INFO] Thread count is set to %d", thread_count));
-        } catch (Exception e) {
-            log.error("[ERROR]" + e.getMessage());
-        }
-    }
-    @KafkaListener(topics = "product-controller", groupId = "product_commands_group")
+    public String setThreadPoolSize(int threadCount){
+            if (threadCount > threadPoolTaskExecutor.getMaxPoolSize())
+                return "This number exceeds the max pool size. Try a number less than " + threadPoolTaskExecutor.getMaxPoolSize();
+            threadPoolTaskExecutor.setCorePoolSize(threadCount);
+            log.info("New thread pool size: " + threadPoolTaskExecutor.getCorePoolSize());
+            return "Thread pool size changed to: " + threadCount;
+    }    @KafkaListener(topics = "product-controller", groupId = "product_commands_group")
     public void controller_handler(Map<String, Object> data) {
         // TODO: make each into command pattern
         System.out.println("[Controller Handler] Received data: " + data.toString());
@@ -125,7 +115,7 @@ public class ProductMQController {
                     log.error("[ERROR] threads value is incorrect");
                 }
 
-                setThreadCount(new_thread_count);
+                setThreadPoolSize(new_thread_count);
                 break;
 
             case "set_max_db_connections_count":
