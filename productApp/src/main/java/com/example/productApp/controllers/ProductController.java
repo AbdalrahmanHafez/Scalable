@@ -41,7 +41,7 @@ public class ProductController {
             @PathVariable("category_id") String category_id) {
         return productService.getProductsByCategoryId(category_id);
     }
-    @GetMapping(path = "getApps/search")
+    @GetMapping(path = "/getApps/search")
     public List<Product> getProductsByName(
             @RequestParam("name") String name) {
         return productService.getProductsByNameRegex(name);
