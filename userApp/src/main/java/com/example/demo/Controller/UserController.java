@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 import com.example.demo.Config.JwtTokenProvider;
+import com.example.demo.Kafka.ControllerProducer;
 import com.example.demo.Models.RequestThread;
 import com.example.demo.Repository.UserRepository;
 import com.example.demo.Models.User;
@@ -13,7 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -31,15 +35,15 @@ public class UserController {
             return null;
     }
 
-    private KafkaProducer kafkaProducer;
-    private KafkaJSONProducer kafkaJSONProducer;
+    private final KafkaProducer kafkaProducer;
+    private final ControllerProducer kafkaJSONProducer;
     private final UserService userServices;
     private final UserRepository userRepository;
     @Autowired
     private LoggingService loggingService;
 
     @Autowired
-    public UserController(UserService userServices, JwtTokenProvider jwtTokenProvider, UserRepository userRepository, KafkaProducer kafkaProducer, KafkaJSONProducer kafkaJSONProducer) {
+    public UserController(UserService userServices, JwtTokenProvider jwtTokenProvider, UserRepository userRepository, KafkaProducer kafkaProducer, ControllerProducer kafkaJSONProducer) {
         this.userServices = userServices;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
@@ -127,8 +131,6 @@ public class UserController {
          return userServices.setThreadPoolSize(threads.getThreadCount());
     }
 
-
-
     @GetMapping("/kafka/publish")
     public ResponseEntity<String> publish(@RequestParam("message") String message)
     {
@@ -137,10 +139,25 @@ public class UserController {
     }
 
     @PostMapping("/kafka/publishJson")
-    public ResponseEntity<String> publishJson(@RequestBody User user)
+    public ResponseEntity<String> publishJson()
     {
-        kafkaJSONProducer.sendMessage(user);
-        return ResponseEntity.ok("Message sent to UserCluster");
+        HashMap<String,Object> data = new HashMap<String, Object>() ;
+//        HashMap<String,String> userData = new HashMap<String, String>() ;
+//        userData.put("name","NewUser3");
+//        userData.put("email","newuser3@email.com");
+//        userData.put("password","user3@pass");
+//
+//        data.put("adduser",userData);
+
+        HashMap<String,String> loginData = new HashMap<String, String>() ;
+//        loginData.put("email","yousseif@email.com");
+//        loginData.put("password","yousseif@pass");
+
+        //data.put("setthreadpoolsize",15);
+        //data.put("login",loginData);
+        data.put("logging","ERROR");
+        kafkaJSONProducer.sendMessage(data);
+        return ResponseEntity.ok("Message sent to user-controller");
     }
 
 

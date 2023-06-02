@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class KafkaJSONConsumer
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(com.example.demo.Kafka.KafkaConsumer.class);
-    @KafkaListener(topics = "UserClusterJson",groupId = "UserConsumerGroup")
-    public void consume(User user)
-    {
-        LOGGER.info(String.format("Message received -> %s",user.toString()));
-    }
+//    private static final Logger LOGGER = LoggerFactory.getLogger(com.example.demo.Kafka.KafkaConsumer.class);
+//    @KafkaListener(topics = "UserClusterJson",groupId = "UserConsumerGroup")
+//    public void consume(User user)
+//    {
+//        LOGGER.info(String.format("Message received -> %s",user.toString()));
+//    }
 }

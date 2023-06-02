@@ -13,7 +13,11 @@ public class KafkaTopicConfig {
     {
         return TopicBuilder.name("UserCluster").partitions(10).build();
     }
-
+    @Bean
+    public NewTopic topicCommandBuilder()
+    {
+        return TopicBuilder.name("user-controller").partitions(10).build();
+    }
     @Bean
     public NewTopic topicJsonBuilder()
     {

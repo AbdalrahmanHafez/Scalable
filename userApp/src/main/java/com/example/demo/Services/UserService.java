@@ -5,11 +5,15 @@ import com.example.demo.Config.JwtTokenProvider;
 import com.example.demo.Models.User;
 import com.example.demo.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.logging.LogLevel;
+import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -21,12 +25,13 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @Configuration
+@Component
 @ComponentScan("com.example.demo.repository")
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-
+    private final Environment environment;
     @Autowired
     private LoggingService loggingService;
 
@@ -34,10 +39,11 @@ public class UserService {
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, Environment environment, ThreadPoolTaskExecutor threadPoolTaskExecutor) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.environment = environment;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
     }
 
@@ -131,7 +137,8 @@ public class UserService {
 
             if(password != null && password.length() > 0 && !Objects.equals(user.getPassword(), password)){
                 loggingService.logInfo("Password has been changed.", user.getId());
-                user.setPassword(password);
+                String hashedPassword = passwordEncoder.encode(user.getPassword());
+                user.setPassword(hashedPassword);
             }
 
             userRepository.save(user);
@@ -185,5 +192,22 @@ public class UserService {
         catch(Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    @Override
+    public String toString() {
+        return "service";
+    }
+
+    public String getProperty(String key) {
+        return environment.getProperty(key);
+    }
+
+    public void setProperty(String key, String value) {
+        System.setProperty(key, value);
+    }
+
+    public void setLoggingLevel(String logLevel) {
+        LoggingSystem.get(getClass().getClassLoader()).setLogLevel("root", LogLevel.valueOf(logLevel));
     }
 }
