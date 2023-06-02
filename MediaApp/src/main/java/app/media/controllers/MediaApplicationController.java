@@ -38,9 +38,18 @@ import app.media.repositories.AppMediaRepository;
 import lombok.extern.slf4j.Slf4j;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.ConnectionString;
 import com.mongodb.DBObject;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoCredential;
+import com.mongodb.MongoDriverInformation;
+import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.gridfs.model.GridFSFile;
+import com.mongodb.connection.ClusterSettings;
 
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
@@ -71,6 +80,11 @@ import java.util.concurrent.TimeUnit;
 public class MediaApplicationController {
 
 	public static boolean isPaused = false;
+
+	@Autowired
+	private MongoClient mongoClient;
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
 	@Autowired
 	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
@@ -167,6 +181,22 @@ public class MediaApplicationController {
 		return new ResponseEntity<String>("OK", HttpStatus.OK);
 	}
 
+	@GetMapping("/updateDB/{new_connection_uri}")
+	public String updateDB(@PathVariable String new_connection_uri) {
+		log.info("[INFO] trying to updateDB");
+
+		// ConnectionString connectionString = new ConnectionString(
+		// "mongodb+srv://Yousef:OrY39uo9XYO9FS4k@cluster0.urbm3.mongodb.net/?retryWrites=true&w=majority&maxPoolSize=2");
+
+		ConnectionString connectionString = new ConnectionString(new_connection_uri);
+		MongoClient newClient = MongoClients.create(connectionString);
+		mongoClient = newClient;
+		mongoTemplate = new MongoTemplate(newClient, "mediadb");
+
+		log.info("[INFO] updateDB is updated");
+		return "OK";
+	}
+
 	@PostMapping("/test2")
 	public String test2(@RequestBody HashMap<String, Object> body) {
 		System.out.println("[TEST2]");
@@ -180,36 +210,74 @@ public class MediaApplicationController {
 	static int value = 0;
 
 	@GetMapping("/test")
-	@Async
-	public CompletableFuture<String> test() {
+	// @Async
+	public String test() {
+		// System.setProperty("spring.data.mongodb.uri",
+		// "mongodb+srv://Yousef:OrY39uo9XYO9FS4k@cluster0.urbm3.mongodb.net/?retryWrites=true&w=majority&maxPoolSize=2");
+
+		// System.out.println("[TEST] " + mongoClient.toString());
+		// System.out.println("[TEST] " + mongoTemplate.toString());
+
+		// MongoCredential mongoCredential = MongoCredential.createCredential("Yousef",
+		// "mediadb",
+		// "OrY39uo9XYO9FS4k".toCharArray());
+		// MongoClient newClient = MongoClients.create(
+		// MongoClientSettings.builder().credential(mongoCredential)
+		// .applyConnectionString(new com.mongodb.ConnectionString(
+		// "mongodb+srv://cluster0.urbm3.mongodb.net/mediadb?retryWrites=true&w=majority&maxPoolSize=2"))
+
+		// .applyToClusterSettings(builder ->
+		// builder.hosts(Arrays.asList(address))).build());
+		// ServerAddress address = new ServerAddress("cluster0.urbm3.mongodb.net",
+		// 62797);
+		// .applyToConnectionPoolSettings(builder -> builder.maxSize(2))
+		// ClusterSettings settings =
+		// mongoClient.getClusterDescription().getClusterSettings();
+		// System.out.println(settings.getMode());
+		// print the connection string
+		// System.out.println(settings.getHosts().get(0));
+		// settings.getHosts().forEach(host -> System.out.println(host.getHost() + ":" +
+		// host.getPort()));
+
+		// ============
+		ConnectionString connectionString = new ConnectionString(
+				"mongodb+srv://Yousef:OrY39uo9XYO9FS4k@cluster0.urbm3.mongodb.net/?retryWrites=true&w=majority&maxPoolSize=2");
+		MongoClient newClient = MongoClients.create(connectionString);
+
+		mongoClient = newClient;
+		mongoTemplate = new MongoTemplate(newClient, "mediadb");
+
+		return "OK";
+
 		// System.out.println("[TEST] TEST is called");
 
-		value += 1;
-		String copyValue = String.format("value: %d", value);
+		// value += 1;
+		// String copyValue = String.format("value: %d", value);
 
-		CompletableFuture<String> res = CompletableFuture.supplyAsync(() -> {
-			System.out.println(String.format("[start] Thread, %s", copyValue));
-			log.info("Thread started");
+		// public CompletableFuture<String> test() {
+		// CompletableFuture<String> res = CompletableFuture.supplyAsync(() -> {
+		// System.out.println(String.format("[start] Thread, %s", copyValue));
+		// log.info("Thread started");
 
-			// if (copyValue.equals("value: 1")) {
-			// log.error("Error occured");
-			// throw new RuntimeException("test");
-			// }
+		// // if (copyValue.equals("value: 1")) {
+		// // log.error("Error occured");
+		// // throw new RuntimeException("test");
+		// // }
 
-			try {
-				Thread.currentThread().sleep(3 * 1000);
-				System.out.println(String.format("[End] Thread, %s", copyValue));
-				log.info("Thread ended");
-			} catch (InterruptedException e) {
-				log.error("InterruptedException " + e.getMessage());
-				// System.out.println("Interruptedxception");
-				e.printStackTrace();
-			}
+		// try {
+		// Thread.currentThread().sleep(3 * 1000);
+		// System.out.println(String.format("[End] Thread, %s", copyValue));
+		// log.info("Thread ended");
+		// } catch (InterruptedException e) {
+		// log.error("InterruptedException " + e.getMessage());
+		// // System.out.println("Interruptedxception");
+		// e.printStackTrace();
+		// }
 
-			return "OK";
-		}, threadPoolTaskExecutor);
+		// return "OK";
+		// }, threadPoolTaskExecutor);
 
-		return res;
+		// return res;
 
 		// System.out.println(commands.size());
 
