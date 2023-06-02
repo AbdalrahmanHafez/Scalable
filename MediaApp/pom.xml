@@ -10,9 +10,9 @@
 	</parent>
 
 	<groupId>app.media</groupId>
-	<artifactId>MediaApp</artifactId>
+	<artifactId>mediaapp</artifactId>
 	<version>0.0.1</version>
-	<name>MediaApp</name>
+	<name>mediaapp</name>
 	<description>MediaApp mini service</description>
 	<properties>
 		<java.version>17</java.version>
