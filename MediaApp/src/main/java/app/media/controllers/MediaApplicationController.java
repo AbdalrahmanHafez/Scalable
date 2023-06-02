@@ -29,8 +29,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
 import app.media.commands.Command;
+import app.media.interceptors.CustomInterceptor;
 import app.media.models.AppMedia;
 import app.media.repositories.AppMediaRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +69,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RestController
 public class MediaApplicationController {
+
+	public static boolean isPaused = false;
 
 	@Autowired
 	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
@@ -149,6 +153,20 @@ public class MediaApplicationController {
 		return new ResponseEntity<String>("OK", HttpStatus.OK);
 	}
 
+	@GetMapping("/continue")
+	public ResponseEntity<String> continueServer() {
+		isPaused = false;
+		System.out.println("[INFO] Server is continued");
+		return new ResponseEntity<String>("OK", HttpStatus.OK);
+	}
+
+	@GetMapping("/pause")
+	public ResponseEntity<String> pauseServer() {
+		isPaused = true;
+		System.out.println("[INFO] Server is paused");
+		return new ResponseEntity<String>("OK", HttpStatus.OK);
+	}
+
 	@PostMapping("/test2")
 	public String test2(@RequestBody HashMap<String, Object> body) {
 		System.out.println("[TEST2]");
@@ -173,10 +191,10 @@ public class MediaApplicationController {
 			System.out.println(String.format("[start] Thread, %s", copyValue));
 			log.info("Thread started");
 
-			if (copyValue.equals("value: 1")) {
-				log.error("Error occured");
-				// throw new RuntimeException("test");
-			}
+			// if (copyValue.equals("value: 1")) {
+			// log.error("Error occured");
+			// throw new RuntimeException("test");
+			// }
 
 			try {
 				Thread.currentThread().sleep(3 * 1000);
