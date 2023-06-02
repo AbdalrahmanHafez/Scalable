@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -27,11 +28,11 @@ public class CategoryController {
     }
 
     @GetMapping("/getCategory/{id}")
-    CompletableFuture<Category> getCategory(@PathVariable("id") int id){
+    CompletableFuture<Optional<Category>> getCategory(@PathVariable("id") String id){
         return categoryService.getCategory(id);
     }
 
-    @PostMapping
+    @PostMapping("/createCategory")
     public CompletableFuture<Category> createCategory(@RequestBody Category category) {
         return categoryService.createCategory(category);
     }

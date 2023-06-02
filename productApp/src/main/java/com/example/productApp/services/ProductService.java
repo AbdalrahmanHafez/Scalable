@@ -47,7 +47,11 @@ public class ProductService {
         }, threadPoolTaskExecutor);
         return products;
     }
-
+    public List<Product> getProductsByNameRegex(String name) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("productName").regex(name));
+        return mongoTemplate.find(query, Product.class);
+    }
     public Product getProductById(String productId) {
         Optional<Product> productOptional = productRepository.findById(productId);
 
@@ -415,6 +419,31 @@ public class ProductService {
                 productRepository.save(productOptional.get());
             }
             message = "App with id" + " " + productId + " " + "has increases 4star successfully";
+            logsSender.sendLogMessage(message);
+        }
+       
+        return message;
+
+    }
+
+
+
+
+    public String increasedownloadcount(String productId) {
+        String message;
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            message = "App with id" + " " + productId + " " + "does not exists";
+            logsSender.sendErrorMessage(message);
+        }
+        else{
+            int downloadcountamount = productOptional.get().getDownload_count();
+
+            downloadcountamount=downloadcountamount+1;
+            productOptional.get().setDownload_count(downloadcountamount);
+           
+            productRepository.save(productOptional.get());
+            message = "App with id" + " " + productId + " " + "has downloadcount successfully";
             logsSender.sendLogMessage(message);
         }
        
