@@ -9,6 +9,7 @@
     <modules>
 		<module>MediaApp</module>
 		<module>productApp</module>
+		<module>userApp</module>
     </modules>
 
 	<properties>
