@@ -1,26 +1,15 @@
 package app.media.controllers;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-import javax.swing.plaf.synth.SynthToolBarUI;
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.springframework.amqp.rabbit.annotation.EnableRabbit;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,51 +18,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-
 import app.media.commands.Command;
-import app.media.interceptors.CustomInterceptor;
-import app.media.models.AppMedia;
-import app.media.repositories.AppMediaRepository;
 import lombok.extern.slf4j.Slf4j;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.ConnectionString;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoCredential;
-import com.mongodb.MongoDriverInformation;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.client.gridfs.model.GridFSFile;
-import com.mongodb.connection.ClusterSettings;
-
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.gridfs.GridFsOperations;
-import org.springframework.data.mongodb.gridfs.GridFsResource;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -197,6 +153,22 @@ public class MediaApplicationController {
 		return "OK";
 	}
 
+	@GetMapping("/setLogLevel/{new_log_level}")
+	public String setLogLevel(@PathVariable String new_log_level) {
+		log.info("[INFO] setting loglevel to " + new_log_level);
+
+		Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+		root.setLevel(Level.valueOf(new_log_level));
+		// root.setLevel(Level.TRACE);
+
+		// log.trace("This is a TRACE log");
+		// log.debug("This is a DEBUG log");
+		// log.info("This is an INFO log");
+		// log.error("This is an ERROR log");
+
+		return "OK";
+	}
+
 	@PostMapping("/test2")
 	public String test2(@RequestBody HashMap<String, Object> body) {
 		System.out.println("[TEST2]");
@@ -212,6 +184,34 @@ public class MediaApplicationController {
 	@GetMapping("/test")
 	// @Async
 	public String test() {
+		System.out.println("[TEST] Test endpoint called");
+
+		// System.setProperty("logging.level.root", "DEBUG");
+
+		// change the log level for log
+
+		// var context = (LoggerContext) LoggerFactory.getILoggerFactory();
+		// var logger = context.getLogger(name);
+		// if (logger != null) {
+		// logger.setLevel(level);
+		// } else {
+		// // handle missing logger here
+		// }
+
+		// LoggerContext loggerContext = (LoggerContext)
+		// LoggerFactory.getILoggerFactory();
+
+		// Logger root = (Logger)
+		// LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+		// root.setLevel(Level.TRACE);
+
+		// loggerContext.getLogger("app.media.controllers.MediaApplicationController").setLevel(Level.DEBUG);
+
+		// log.trace("This is a TRACE log");
+		// log.debug("This is a DEBUG log");
+		// log.info("This is an INFO log");
+		// log.error("This is an ERROR log");
+
 		// System.setProperty("spring.data.mongodb.uri",
 		// "mongodb+srv://Yousef:OrY39uo9XYO9FS4k@cluster0.urbm3.mongodb.net/?retryWrites=true&w=majority&maxPoolSize=2");
 
@@ -240,12 +240,12 @@ public class MediaApplicationController {
 		// host.getPort()));
 
 		// ============
-		ConnectionString connectionString = new ConnectionString(
-				"mongodb+srv://Yousef:OrY39uo9XYO9FS4k@cluster0.urbm3.mongodb.net/?retryWrites=true&w=majority&maxPoolSize=2");
-		MongoClient newClient = MongoClients.create(connectionString);
+		// ConnectionString connectionString = new ConnectionString(
+		// "mongodb+srv://Yousef:OrY39uo9XYO9FS4k@cluster0.urbm3.mongodb.net/?retryWrites=true&w=majority&maxPoolSize=2");
+		// MongoClient newClient = MongoClients.create(connectionString);
 
-		mongoClient = newClient;
-		mongoTemplate = new MongoTemplate(newClient, "mediadb");
+		// mongoClient = newClient;
+		// mongoTemplate = new MongoTemplate(newClient, "mediadb");
 
 		return "OK";
 
