@@ -426,4 +426,29 @@ public class ProductService {
 
     }
 
+
+
+
+    public String increasedownloadcount(String productId) {
+        String message;
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            message = "App with id" + " " + productId + " " + "does not exists";
+            logsSender.sendErrorMessage(message);
+        }
+        else{
+            int downloadcountamount = productOptional.get().getDownload_count();
+
+            downloadcountamount=downloadcountamount+1;
+            productOptional.get().setDownload_count(downloadcountamount);
+           
+            productRepository.save(productOptional.get());
+            message = "App with id" + " " + productId + " " + "has downloadcount successfully";
+            logsSender.sendLogMessage(message);
+        }
+       
+        return message;
+
+    }
+
 }

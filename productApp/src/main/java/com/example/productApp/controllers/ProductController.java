@@ -121,4 +121,15 @@ public class ProductController {
         productService.updateAverageRating(productId);
 
     }
+
+
+    @PutMapping(path = "/increaseDownloadCount/{productId}")
+    public void increasedownloadCounter(
+            @PathVariable("productId") String productId
+    ) {
+        productService.increasedownloadcount(productId);
+
+    }
+
+
 }
