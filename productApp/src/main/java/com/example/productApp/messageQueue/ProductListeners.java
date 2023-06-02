@@ -3,6 +3,7 @@ package com.example.productApp.messageQueue;
 import com.example.productApp.commands.Command;
 import com.example.productApp.commands.Invoker;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.core.appender.rolling.action.IfAccumulatedFileCount;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import java.util.Map;
 public class ProductListeners {
 
 
+    String userId;
     private final Invoker invoker;
     private final KafkaTemplate<String, Map<String , Object>> kafkaTemplate;
 
@@ -55,8 +57,10 @@ public class ProductListeners {
             topics = "user-product",
             groupId = "UserConsumerGroup"
     )
-    void userListener(HashMap<String,Object> request){
-            String userId = (String) request.get("getuserbytoken");
+    void userListener(HashMap<String,Object> data) {
+        if (data.get("request") == null) {
+            userId = (String) data.get("getuserbytoken");
             log.info("Received userId");
+        }
     }
 }

@@ -33,6 +33,7 @@ public class ProductMQController {
 
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+   String userToken;
 
     public ProductMQController(KafkaTemplate<String, Map<String ,Object>> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
@@ -46,11 +47,32 @@ public class ProductMQController {
 //    }
     public void publishUserId(){
         HashMap<String , Object> request = new HashMap<>();
-        request.put("getuserbytoken","");
+        request.put("getuserbytoken",userToken);
+        request.put("request", "request");
         kafkaTemplate.send("user-product" , request);
         log.info("request sent to user");
     }
+    public void logInhUserId(){
+        Map<String , Object> request = new HashMap<>();
+        Map<String,String> userData = new HashMap<String, String>() ;
+        userData.put("email","newuser3@email.com");
+        userData.put("password","user3@pass");
+        request.put("login" , userData);
+        request.put("request", "request");
+        kafkaTemplate.send("user-product" , request);
+        log.info("Token request");
+    }
+    @KafkaListener(
+            topics = "user-product",
+            groupId = "UserConsumerGroup"
+    )
+    void userListener(HashMap<String,Object> data){
+      if (data.get("request")==null) {
+          userToken = (String) data.get("login");
+          log.info("Token received");
+      }
 
+    }
     public void setLogLevel(String new_log_level) {
         log.info("[INFO] setting loglevel to " + new_log_level);
 
