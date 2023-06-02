@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class SetErrorReportingLevelCommand implements Command {
     @Override
-    public Object execute(HashMap<String, Object> map) throws Exception {
+    public Object execute(HashMap<String, Object> map)  {
         PropertiesHandler.addProperty("logging.level.root", (String) map.get("logging_level"));
         return null;
     }
