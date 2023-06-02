@@ -9,7 +9,7 @@ public class GetCategoryCommand extends CategoryCommand {
 
     @Override
     public Object execute(HashMap<String, Object> map) throws Exception {
-        int id = (int) map.get("category_id");
+        String id = (String) map.get("category_id");
         return getService().getCategory(id);
     }
 }
