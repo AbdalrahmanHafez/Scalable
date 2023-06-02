@@ -22,12 +22,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import app.media.commands.Command;
@@ -130,6 +125,52 @@ public class MediaApplicationController {
 
 	}
 
+	//delete App APK
+	@DeleteMapping("/deleteAppAPK/{app_id}")
+	@Async
+	public CompletableFuture<ResponseEntity<String>> DeleteAppApk(@PathVariable String app_id)
+			throws IOException {
+		System.out.println("deleteAppApk");
+		return CompletableFuture.supplyAsync(() -> {
+			HashMap<String, Object> body = new HashMap<>();
+			body.put("app_id", app_id);
+
+			return commands.get("deleteAppApkCommand").execute(body);
+		}, threadPoolTaskExecutor);
+	}
+
+	@DeleteMapping("/deleteAppMedia")
+	@Async
+	public CompletableFuture<ResponseEntity<String>> DeleteAppMedia(
+			@RequestParam("app_id") String app_id,
+			@RequestParam("link") String link)
+			throws IOException {
+
+		return CompletableFuture.supplyAsync(() -> {
+			HashMap<String, Object> body = new HashMap<>();
+			body.put("app_id", app_id);
+			body.put("link", link);
+
+			return commands.get("deleteAppMediaCommand").execute(body);
+		}, threadPoolTaskExecutor);
+	}
+
+	@PatchMapping("/updateAppAPK")
+	@Async
+	public CompletableFuture<ResponseEntity<String>> UpdateAppAPK(
+			@RequestParam("app_id") String app_id,
+			@RequestParam("data") MultipartFile apkData)
+			throws IOException {
+
+		return CompletableFuture.supplyAsync(() -> {
+			HashMap<String, Object> body = new HashMap<>();
+			body.put("app_id", app_id);
+			body.put("data", apkData);
+
+			return commands.get("updateAppApkCommand").execute(body);
+		}, threadPoolTaskExecutor);
+	}
+
 	// Controller Commands
 	@PostMapping(path = "/set_max_thread_count/{thread_count}")
 	public ResponseEntity<String> adjustThreads(@PathVariable String thread_count) {
@@ -182,6 +223,7 @@ public class MediaApplicationController {
 		}, threadPoolTaskExecutor);
 
 		return res;
+
 
 		// System.out.println(commands.size());
 

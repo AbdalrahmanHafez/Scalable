@@ -45,60 +45,37 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 @Component
-public class PostAppApkCommand extends Command {
+public class DeleteAppMediaCommand extends Command{
+    @Autowired
+    AppMediaRepository appRepo;
 
-	// @Autowired
-	// MediaApplicationController mediaApplicationController;
+    @Override
+    public ResponseEntity execute(HashMap<String, Object> map) {
+        String app_id = (String) map.get("app_id");
+        Optional<AppMedia> appMediaOp = appRepo.findById(app_id);
 
-	@Autowired
-	AppMediaRepository appRepo;
+        if (!appMediaOp.isPresent())
+            return new ResponseEntity("App does not exists", HttpStatus.BAD_REQUEST);
 
-	@Autowired
-	private GridFsTemplate gridFsTemplate;
+        String link = (String) map.get("link");
+        appMediaOp.get().media.stream().filter(media -> media.link.equals(link)).findFirst().ifPresent(media -> {
+            appMediaOp.get().media.remove(media);
+        });
+       appRepo.save(appMediaOp.get());
 
-	@Autowired
-	private GridFsOperations operations;
-
-	@Override
-	public ResponseEntity execute(HashMap<String, Object> map) {
-		String app_id = (String) map.get("app_id");
-		MultipartFile apkData = (MultipartFile) map.get("data");
-
-		if (appRepo.findById(app_id).isPresent())
-			return new ResponseEntity<>("App already exists", HttpStatus.BAD_REQUEST);
-
-		AppMedia m = new AppMedia();
-		m.app_id = app_id;
-		try {
-			m.apk_id = gfsUploadFile(apkData);
-		} catch (IOException e) {
-			System.out.println("[ERROR] Error while uploading apk. gfsUploadFile()");
-			return new ResponseEntity<>("Error uploading apk", HttpStatus.BAD_REQUEST);
-		}
-
-		appRepo.save(m);
-
-		return new ResponseEntity<>(HttpStatus.OK);
-
-	}
-
-	public String gfsUploadFile(MultipartFile upload) throws IOException {
-
-		DBObject metadata = new BasicDBObject();
-		metadata.put("fileSize", upload.getSize());
-
-		Object fileID = gridFsTemplate.store(upload.getInputStream(), upload.getOriginalFilename(),
-				upload.getContentType(), metadata);
-
-		return fileID.toString();
-	}
-
+        return new ResponseEntity("Ok", HttpStatus.OK);
+    }
 }
+
+
+
