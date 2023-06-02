@@ -210,4 +210,16 @@ public class UserService {
     public void setLoggingLevel(String logLevel) {
         LoggingSystem.get(getClass().getClassLoader()).setLogLevel("root", LogLevel.valueOf(logLevel));
     }
+
+    public void freezeServer(){
+        setProperty("app.freeze.enabled", "true");
+    }
+
+    public void unfreezeServer(){
+        setProperty("app.freeze.enabled", "false");
+    }
+
+    public boolean isServerFrozen(){
+        return Boolean.parseBoolean(getProperty("app.freeze.enabled"));
+    }
 }

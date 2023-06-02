@@ -161,4 +161,22 @@ public class UserController {
     }
 
 
+    @PostMapping(path = "/freeze")
+    public void freezeServer(){
+        userServices.freezeServer();
+    }
+
+    @PostMapping(path = "/unfreeze")
+    public void unFreeze(){
+        userServices.unfreezeServer();
+    }
+
+    @GetMapping(path = "/getFreezeStatus")
+    public boolean getFreezeStatus(){
+        return userServices.isServerFrozen();
+    }
+
+
+
+
 }
