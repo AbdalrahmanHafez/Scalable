@@ -5,6 +5,7 @@ import com.example.productApp.models.Comment;
 import com.example.productApp.models.Product;
 import com.example.productApp.repositories.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;

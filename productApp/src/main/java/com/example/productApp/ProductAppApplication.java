@@ -21,12 +21,4 @@ public class ProductAppApplication {
 	}
 
 
-//	@Bean
-//	CommandLineRunner commandLineRunner(KafkaTemplate<String , Map<String,Object>> kafkaTemplate){
-//		Map<String,Object> map= new HashMap<>();
-//		map.put("test" , "test");
-//		return args -> {
-//			kafkaTemplate.send("productApp" , map);
-//		};
-//	}
 }

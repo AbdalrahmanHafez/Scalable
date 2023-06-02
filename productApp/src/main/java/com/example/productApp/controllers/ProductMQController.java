@@ -13,16 +13,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/productsMessages")
+@RequestMapping
 public class ProductMQController {
 
     public static boolean isPaused = false;
@@ -40,11 +38,11 @@ public class ProductMQController {
         this.kafkaTemplate = kafkaTemplate;
 
     }
-//    @PostMapping
-//    public void publish(MessageRequest request){
-//        Map<String , Object> map = new HashMap<>();
-//        map.put(request.message().keySet().toString() ,request.message().values());
-//        kafkaTemplate.send("productApp", map);
+    
+//    @PostMapping("/test")
+//    public String publish(@RequestBody Map<String , Object> request){
+//        kafkaTemplate.send("productApp", request);
+//        return "done";
 //    }
 
     public void setLogLevel(String new_log_level) {
