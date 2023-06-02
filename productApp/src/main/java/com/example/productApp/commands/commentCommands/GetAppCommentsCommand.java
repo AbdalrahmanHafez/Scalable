@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class GetAppCommentsCommand extends CommentCommand {
 
     @Override
-    public Object execute(HashMap<String, Object> map) throws Exception {
+    public Object execute(HashMap<String, Object> map){
         return getService().deleteComment((String) map.get("app_id"));
     }
 }

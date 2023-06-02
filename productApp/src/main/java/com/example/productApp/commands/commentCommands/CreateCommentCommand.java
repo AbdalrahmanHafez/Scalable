@@ -9,7 +9,7 @@ import java.util.Map;
 @Component
 public class CreateCommentCommand extends CommentCommand{
     @Override
-    public Object execute(HashMap<String, Object> map) throws Exception {
+    public Object execute(HashMap<String, Object> map)  {
         Comment comment = new Comment();
         comment.setAppId((String)map.get("app_id"));
         comment.setComment((String)map.get("comment"));

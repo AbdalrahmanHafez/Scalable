@@ -10,7 +10,7 @@ public class Invoker {
     public void SetCommand(Command comm){
         commExec = comm;
     }
-    public void ExecuteCommand(HashMap<String, Object> request) throws Exception {
+    public void ExecuteCommand(HashMap<String, Object> request) {
         commExec.execute( request);
     }
 

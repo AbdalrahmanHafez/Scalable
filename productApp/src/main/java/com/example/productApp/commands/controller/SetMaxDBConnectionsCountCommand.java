@@ -4,11 +4,12 @@ import com.example.productApp.commands.Command;
 
 import java.util.HashMap;
 
-public class SetMaxThreadCountCommand implements Command {
+public class SetMaxDBConnectionsCountCommand implements Command {
 
     @Override
     public Object execute(HashMap<String , Object> map)  {
-        PropertiesHandler.addProperty("freeze", "true");
+//        int x = Integer.parseInt((String) map.get("db_conn"));
+//        DBConnection.setMaxConnections(x);
         return new Object();
     }
 

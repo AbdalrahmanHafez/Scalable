@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class AddProductCommand extends ProductCommand {
     @Override
-    public Object execute(HashMap<String, Object> map) throws Exception {
+    public Object execute(HashMap<String, Object> map)  {
         Product product = new Product();
         product.setProductId((String) map.get("productId"));
         product.setProductName((String) map.get("productName"));
