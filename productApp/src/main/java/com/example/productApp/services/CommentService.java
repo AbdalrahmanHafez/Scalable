@@ -39,7 +39,7 @@ public class CommentService {
 
     }
 
-    public CompletableFuture<List<Comment>> getCommentsByUser(String userId) throws Exception {
+    public CompletableFuture<List<Comment>> getCommentsByUser(String userId) {
 
             CompletableFuture<List<Comment>> commentsList = CompletableFuture.supplyAsync(() -> {
                 if (userId == null) {
@@ -67,7 +67,7 @@ public class CommentService {
     }
 
 
-    public CompletableFuture<List<Comment>> getAppComments(String appId) throws Exception {
+    public CompletableFuture<List<Comment>> getAppComments(String appId)  {
         CompletableFuture<List<Comment>> commentsList = CompletableFuture.supplyAsync(() -> {
             Product app = productService.getProductById(appId);
             if (app == null) {
@@ -95,7 +95,7 @@ public class CommentService {
     }
 
 
-    public CompletableFuture<Comment> createComment(Comment comment) throws Exception {
+    public CompletableFuture<Comment> createComment(Comment comment){
         CompletableFuture<Comment> commentCF = CompletableFuture.supplyAsync(() -> {
             if (comment.getUserId() == null) {
                 String errorMessage = "UserId required for creating comment";
@@ -120,7 +120,7 @@ public class CommentService {
     }
 
 
-    public CompletableFuture<String> deleteComment(String commentId) throws Exception {
+    public CompletableFuture<String> deleteComment(String commentId)  {
         CompletableFuture<String> commentCF = CompletableFuture.supplyAsync(() -> {
             Comment comment = commentRepository.findById(commentId).orElse(null);
             if (comment == null) {

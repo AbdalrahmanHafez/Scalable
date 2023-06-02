@@ -44,6 +44,12 @@ public class ProductMQController {
 //        kafkaTemplate.send("productApp", request);
 //        return "done";
 //    }
+    public void publishUserId(){
+        HashMap<String , Object> request = new HashMap<>();
+        request.put("getuserbytoken","");
+        kafkaTemplate.send("user-product" , request);
+        log.info("request sent to user");
+    }
 
     public void setLogLevel(String new_log_level) {
         log.info("[INFO] setting loglevel to " + new_log_level);

@@ -9,7 +9,7 @@ public class GetAllCategoriesCommand extends CategoryCommand {
 
 
     @Override
-    public Object execute(HashMap<String, Object> map) throws Exception {
+    public Object execute(HashMap<String, Object> map)  {
         return getService().getAllCategories();
     }
 }

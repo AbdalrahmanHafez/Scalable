@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class FreezeCommand implements Command {
 
     @Override
-    public Object execute(HashMap<String , Object> map) throws Exception {
+    public Object execute(HashMap<String , Object> map) {
         PropertiesHandler.addProperty("freeze", "true");
         return new Object();
     }

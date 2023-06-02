@@ -50,4 +50,13 @@ public class ProductListeners {
             log.error(String.valueOf(e));
         }
     }
+
+    @KafkaListener(
+            topics = "user-product",
+            groupId = "UserConsumerGroup"
+    )
+    void userListener(HashMap<String,Object> request){
+            String userId = (String) request.get("getuserbytoken");
+            log.info("Received userId");
+    }
 }

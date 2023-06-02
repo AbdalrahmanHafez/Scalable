@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class UpdateAverageRatingCommand extends ProductCommand {
     @Override
-    public Object execute(HashMap<String, Object> map) throws Exception {
+    public Object execute(HashMap<String, Object> map) {
         String productId = (String) map.get("productId");
         double productAverageRate = (double) map.get("AverageRating");
         Product productToUpdate = getProductService().getProductById(productId);
