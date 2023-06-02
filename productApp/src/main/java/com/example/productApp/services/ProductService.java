@@ -47,7 +47,11 @@ public class ProductService {
         }, threadPoolTaskExecutor);
         return products;
     }
-
+    public List<Product> getProductsByNameRegex(String name) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("productName").regex(name));
+        return mongoTemplate.find(query, Product.class);
+    }
     public Product getProductById(String productId) {
         Optional<Product> productOptional = productRepository.findById(productId);
 
