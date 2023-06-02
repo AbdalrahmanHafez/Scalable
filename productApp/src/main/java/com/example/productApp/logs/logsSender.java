@@ -21,7 +21,6 @@ public class logsSender {
     public static void sendErrorMessage(String message) {
         sendMessage(message, "error");
         log.error(message);
-
     }
 
     private static void sendMessage(String message, String messageType) {
