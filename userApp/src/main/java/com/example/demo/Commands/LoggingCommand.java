@@ -10,14 +10,13 @@ public class LoggingCommand extends Command{
     }
 
     public String getName() {
-        return "logging";
+        return "set_error_reporting_level";
     }
 
     @Override
     public Object execute(Object obj) {
         String newLogg = (String) obj;
         userService.setLoggingLevel(newLogg);
-        System.out.println("enter logging command");
         return "Message Queue address set to: " + newLogg;
     }
 }

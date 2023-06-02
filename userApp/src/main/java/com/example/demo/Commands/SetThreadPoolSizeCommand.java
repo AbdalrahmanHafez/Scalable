@@ -12,7 +12,7 @@ public class SetThreadPoolSizeCommand extends Command{
     }
     public String getName()
     {
-        return "setthreadpoolsize";
+        return "set_max_thread_count";
     }
     @Override
     public Object execute(Object obj) {
