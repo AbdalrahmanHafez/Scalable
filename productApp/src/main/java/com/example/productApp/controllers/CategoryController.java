@@ -32,7 +32,7 @@ public class CategoryController {
         return categoryService.getCategory(id);
     }
 
-    @PostMapping
+    @PostMapping("/createCategory")
     public CompletableFuture<Category> createCategory(@RequestBody Category category) {
         return categoryService.createCategory(category);
     }
