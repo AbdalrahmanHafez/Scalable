@@ -16,6 +16,6 @@ public class IncreaseDownloadCountCommand extends ProductCommand{
         if (map.containsKey("download_count")) {
             productToUpdate.setDownload_count((int) map.get("download_count"));
         }
-        return getProductService().updateAverageRating(productId);
+        return getProductService().increasedownloadcount(productId);
     }
 }
