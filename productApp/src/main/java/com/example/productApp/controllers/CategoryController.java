@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/product/category")
 public class CategoryController {
 
     private final CategoryService categoryService;

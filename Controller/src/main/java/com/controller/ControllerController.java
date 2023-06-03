@@ -18,7 +18,7 @@ public class ControllerController {
     private KafkaTemplate<String, Map<String, Object>> kafkaTemplate;
     private Invoker invoker;
 
-    @PostMapping("Command")
+    @PostMapping("/Command")
     public String publish(@RequestBody Map<String, Object> request){
         String actionName = (String) request.get("Action");
         try {

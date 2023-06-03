@@ -36,8 +36,9 @@ services:
     depends_on:
       - broker
       - zipkin
+      - service-registry
     ports:
-      - '8088:8088'
+      - '8088:8080'
 
 
   controller:
@@ -49,8 +50,9 @@ services:
     depends_on:
       - broker
       - zipkin
+      - service-registry
     ports:
-      - '8085:8085'
+      - '8085:8080'
 
   productapp:
     container_name: productapp
@@ -61,8 +63,9 @@ services:
     depends_on:
     - broker
     - zipkin
+    - service-registry
     ports:
-      - '8089:8089'
+      - '8089:8080'
 
   mediaserver:
     container_name: mediaserver
@@ -73,9 +76,22 @@ services:
     depends_on:
       - broker
       - zipkin
+      - service-registry
     ports:
-      - '8086:8086'
+      - '8086:8080'
+  api-gateway:
+    container_name: api-gateway
+    image: ahmedeloraby/api-gateway
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
 
+    depends_on:
+      - userapp
+      - productapp
+      - service-registry
+    ports:
+      - '8001:8080'
   service-registry:
     container_name: service-registry
     image: ahmedeloraby/service-registry

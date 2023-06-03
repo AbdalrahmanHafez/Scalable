@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping("/comments")
+@RequestMapping("/product/comments")
 public class CommentController {
     private final CommentService commentService;
 

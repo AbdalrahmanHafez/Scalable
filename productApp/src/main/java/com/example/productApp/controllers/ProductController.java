@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping(path = "/Apps")
+@RequestMapping(path = "/product/Apps")
 public class ProductController {
 
     private final ProductService productService;

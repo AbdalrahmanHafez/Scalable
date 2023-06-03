@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping
+@RequestMapping("/product")
 public class ProductMQController {
 
     public static boolean isPaused = false;

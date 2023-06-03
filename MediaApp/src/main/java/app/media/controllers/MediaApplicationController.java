@@ -30,6 +30,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
+@RequestMapping("/media")
 public class MediaApplicationController {
 
 	public static boolean isPaused = false;

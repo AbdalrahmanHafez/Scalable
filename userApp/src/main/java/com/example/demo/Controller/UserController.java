@@ -51,6 +51,12 @@ public class UserController {
         this.kafkaJSONProducer = kafkaJSONProducer;
     }
 
+    @GetMapping(path = "/temp")
+    public String aaa(){
+        loggingService.logInfo("Returning all users in DB");
+        return "nope";
+    }
+
     @GetMapping(path = "/admin/user")
     @Async
     public CompletableFuture<List<User>> getUsers(){
