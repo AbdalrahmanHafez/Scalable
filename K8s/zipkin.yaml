@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zipkin
+  labels:
+    app.kubernetes.io/name: zipkin
+    app.kubernetes.io/instance: zipkin
+    app: zipkin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zipkin
+  template:
+    metadata:
+      name: zipkin
+      labels:
+        app: zipkin
+    spec:
+      containers:
+        - name: zipkin
+          image: openzipkin/zipkin:2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9411
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /api/v2/services
+              port: 9411
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+          resources:
+            requests:
+              cpu: 200m
+              memory: 300Mi
+            limits:
+              cpu: 200m
+              memory: 300Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin
+  labels:
+    app.kubernetes.io/name: zipkin
+    app.kubernetes.io/instance: zipkin
+    app: zipkin
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9411
+      targetPort: 9411
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: zipkin
+    app.kubernetes.io/instance: zipkin
+    app: zipkin

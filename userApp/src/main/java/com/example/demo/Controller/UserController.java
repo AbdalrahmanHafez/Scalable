@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 
 @RestController
-@RequestMapping(path ="api/v1")
+@RequestMapping(path ="user/api/v1")
 
 public class UserController {
     @Autowired private HttpServletResponse response;
@@ -51,11 +51,11 @@ public class UserController {
         this.kafkaJSONProducer = kafkaJSONProducer;
     }
 
-    @GetMapping(path = "/temp")
-    public String aaa(){
-        loggingService.logInfo("Returning all users in DB");
-        return "nope";
-    }
+//    @GetMapping(path = "/temp")
+//    public String aaa(){
+//        loggingService.logInfo("Returning all users in DB");
+//        return "nope";
+//    }
 
     @GetMapping(path = "/admin/user")
     @Async

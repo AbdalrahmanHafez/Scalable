@@ -361,7 +361,7 @@ public class MediaApplicationController {
 
 		// mongoClient = newClient;
 		// mongoTemplate = new MongoTemplate(newClient, "mediadb");
-
+		log.info("looggg");
 		return "OK";
 
 		// System.out.println("[TEST] TEST is called");

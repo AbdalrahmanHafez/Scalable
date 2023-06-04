@@ -1,0 +1,54 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: Scale-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+
+spec:
+  rules:
+    - http:
+      paths:
+        - path: /user-api(/|$)(.*)
+          pathType: Prefix
+          backend:
+            service:
+              name: userapp-srv
+              port:
+                number: 80
+    - http:
+      paths:
+        - path: /zipkin-api(/|$)(.*)
+          pathType: Prefix
+          backend:
+            service:
+              name: zipkin
+              port:
+                number: 80
+    - http:
+      paths:
+        - path: /product-api(/|$)(.*)
+          pathType: Prefix
+          backend:
+            service:
+              name: productapp-srv
+              port:
+                number: 80
+    - http:
+      paths:
+        - path: /media-api(/|$)(.*)
+          pathType: Prefix
+          backend:
+            service:
+              name: mediaserver-srv
+              port:
+                number: 80
+    - http:
+      paths:
+        - path: /controller-api(/|$)(.*)
+          pathType: Prefix
+          backend:
+            service:
+              name: controller-srv
+              port:
+                number: 80
